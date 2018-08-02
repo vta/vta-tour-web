@@ -31,6 +31,7 @@
   border-bottom: 1px solid #DDDDDD;
   padding: 6px 0;
   height: 38px !important;
+  /* padding-left: 15px; */
   padding-right: 15px;
   padding-top: 7px;
 
@@ -55,11 +56,14 @@
 
  div#urls1 a {
   font-size: 13px;
- } 
+} 
 
   </style>
 
   <script>
+      
+    
+      
       var flag=0;
       var routeslist = [];
       var config = {
@@ -87,7 +91,7 @@
         $('#envid').prop('disabled', false);
         ressel()
         $('#searchButton').prop('disabled', 'disabled');
-        $("#progress1").html("Please select a route.");
+        $("#progress1").html("Please select an environment.");
         $("#urls1").html("");
         $("#progress").html("");
         $("#urls").html("");
@@ -96,6 +100,8 @@
 
       var refreshIntervalId;
       function chkdir(period) {
+       // clearInterval(refreshIntervalId);
+
         $('#directionid').prop('disabled', false);
         
         $('#searchButton').prop('disabled', 'disabled');
@@ -106,6 +112,12 @@
         $("#urls1").html("");
         $("#progress").html("");
         $("#urls").html("");
+
+        this.sel1 = document.getElementById('camangle');
+        sel1.options.length = 0;
+        this.sel = document.getElementById('resid');
+        sel1.options.length = 0;
+
         this.flag=0 
         var route = undefined
         var cam = undefined
@@ -124,7 +136,9 @@
             b = route_info[i]['directionBName']
             b1 = b.charAt(0).toUpperCase() + b.slice(1);
             select.add(new Option("Select the direction"));
-             $('#directionid').append($("<option></option>")
+            //select.add(new Option(a1));
+            //select.add(new Option(b1));
+            $('#directionid').append($("<option></option>")
                     .attr("value",'a')
                     .text(a1)); 
               $('#directionid').append($("<option></option>")
@@ -137,25 +151,33 @@
         }
       }
       function viewsel() {
-      
+       
         $('#searchButton').prop('disabled', false);
         $('#resid').prop('disabled', false);
-        $('#envid').prop('disabled',false);
-        $("#progress1").html("Please select an environment.");
+       // $('#envid').prop('disabled', 'disabled');
+        $("#progress1").html("");
+       // $("#progress1").html("Please select a resolution.");
         $("#progress").html("");
         $("#urls").html("");
         $("#urls1").html("");
+
         this.sel = document.getElementById('resid');
         sel.options.length = 0;
- 	sel.add(new Option("All"));
+        //sel.add(new Option("Select the resolution"));
+        //sel.add(new Option("High"));
+        //sel.add(new Option("Low"));
+        sel.add(new Option("All"));
+       clearInterval(refreshIntervalId);
 
+        var interval = 1000; // seconds
+        refreshIntervalId = setInterval(ajax_call, interval);
        }
 
       function ressel() {
-        $('#envid').prop('disabled',false);
+        //$('#envid').prop('disabled',false);
         
         $('#searchButton').prop('disabled', 'disabled');
-        $("#progress1").html("Please select an environment.");
+        $("#progress1").html("");
         $("#progress").html("");
         $("#urls").html("");
         $("#urls1").html("");
@@ -167,13 +189,27 @@
        }
 
        function envsel() {
+         //       clearInterval(refreshIntervalId);
+
                 $('#routeid').prop('disabled', false);
                 $('#searchButton').prop('disabled', 'disabled');
                 $('#camangle').prop('disabled', 'disabled');
                 $('#directionid').prop('disabled', 'disabled');
                 $('#resid').prop('disabled', 'disabled');
+                $("#progress1").html("Please select a route.");
+                $("#progress").html("");
+                $("#urls").html("");
+                $("#urls1").html("");
+                this.sel1 = document.getElementById('camangle');
+                sel1.options.length = 0;
+                this.sel1 = document.getElementById('directionid');
+                sel1.options.length = 0;
+                this.sel = document.getElementById('resid');
+                sel1.options.length = 0;
+                
        }
       function angsel() {
+//        clearInterval(refreshIntervalId);
         $('#camangle').prop('disabled', false);
 
         $('#resid').prop('disabled', 'disabled');
@@ -186,10 +222,10 @@
         this.sel = document.getElementById('camangle');
         sel.options.length = 0;
         sel.add(new Option("Select the view"));
-        sel.add(new Option("Forward"));
+     /*   sel.add(new Option("Forward"));
         sel.add(new Option("Backward"));
         sel.add(new Option("Left"));
-        sel.add(new Option("Right"));
+        sel.add(new Option("Right"));*/
         sel.add(new Option("All"));
         
       }
@@ -236,8 +272,6 @@
           cache: false
         });
         console.log("pstatus1:" + pstatus);
-        var interval = 1000; // seconds
-        refreshIntervalId = setInterval(ajax_call, interval);
         //Increment the idle time counter every minute.
         var idleInterval = setInterval(timerIncrement, 60000); /* --------------session !*/
 
@@ -260,7 +294,10 @@
         window.location.href = "/logout"
         }
     }
-            
+   
+
+
+          
       var timearr=[];
       var dbinfo=[];
       var tiemarr=[];
@@ -269,22 +306,11 @@
       var routesinfo = [];
       //this.chk=0;
       this.dt="";
+      
       var ajax_call = function(chk) {
-        c1 = undefined
-        c2 = undefined
-        c1 = document.getElementById("resid").value;
-        c2 = document.getElementById("envid").value;
-    if (c1!= "") {
-      if (c2!= "") {
-        if (c1!= undefined) {
-         if (c1!= "Select a resolution") {
-          if (c2!= "Select an environment") {
-           if (c2!= undefined) {
-        
-
-        
-           
-        var route = undefined
+        var c1 = undefined
+        var c2 = undefined
+        var r2 = undefined
         var cam = undefined
         var dir_1 = undefined
 
@@ -305,38 +331,22 @@
           cam = g.options[g.selectedIndex].value;
        
         }
-        console.log(route + dir + cam)
-       
+        
+        c1 = document.getElementById("resid").value;
+        c2 = document.getElementById("envid").value;
+  
         dbinfo[0] = "dbinfo";
         dbinfo[1] = r2;
         dbinfo[2] = dir_1;
         dbinfo[3] = cam;
         dbinfo[4] = c1;
         dbinfo[5] = c2;
-        if (dir_1 == 'Westbound') {
-            dir = 'a'
-          }
-          if (dir_1 == 'Eastbound') {
-            dir = 'b'
-          }
-        if (dir_1 == 'Northbound') {
-            dir = 'a'
-          }
-          if (dir_1 == 'Southbound') {
-            dir = 'b'
-          }
-        
+
+        if((c2!=undefined) && (r2!=undefined) && (dir_1!=undefined) &&(cam!=undefined) && (r1!=undefined)){
+
         var stationJson = JSON.stringify(dbinfo);
         console.log(stationJson)
         var pythonUrl = "/"; //python url to post data 
-        
-        if (dir_1 != "Select the direction") {
-          if (cam != "Select the view") {
-          if (dir_1 != undefined){
-            if (route != undefined) {
-              if (cam != undefined) {
-
-          
         var sendCordinates = $.ajax({
           type: 'POST',
           url: pythonUrl,
@@ -347,183 +357,99 @@
             $.ajaxSettings.beforeSend(xhr, settings);
           },
           success: function(resultData,data) {
-         
-            sqlstr=resultData;
-            sqlarr = sqlstr.split('|')
-            routesinfo=[];
-           
-           for(i=0;i<sqlarr.length;i++){
-            routesinfo.push(sqlarr[i].split('/'));
-           }
-           
-           $("#urls").html("");
-           $("#urls1").html("");
-           $("#progress").html("");
-           $("#progress1").html("");
-
-
-
-           for(j=0;j<routesinfo.length;j++)
-           {
-               
-          if(j==0){
-              for(k=0;k<2;k++){
-
-              if(routesinfo[k][3]=="Generation completed.") {
-                 r_index=0;
-                 dbinfo[0] = "awslinks";
-                 dbinfo[1] = r2;
-                 dbinfo[2] = dir_1;
-                 dbinfo[3] = cam;
-                 dbinfo[4] = routesinfo[k][5];
-                 dbinfo[5] = c2;
-                 var stationJson = JSON.stringify(dbinfo);
-                 var pythonUrl = "/"; //python url to post data 
-                 var sendCordinates = $.ajax({
-                   type: 'POST',
-                   url: pythonUrl,
-                   data: stationJson,
-                   "beforeSend": function(xhr, settings) {
-                     console.log("Before Send");
-                     $.ajaxSettings.beforeSend(xhr, settings);
-                   },
-                   success: function(resultData) {
-                   dt = String(resultData);
-                   console.log(dt)
-                   timearr=[];
-                   timearr.push(dt.split('/'));
-                   console.log(timearr[0][0])
-                   }
-                 });
-                  r_index=0;
+          $("#progress1").html("");
+          $("#progress").html("");
+          $("#urls").html("");
+          $("#urls1").html("");
+          
+          var sqlstr=JSON.parse(resultData);
+          if (sqlstr[0]!="no_data_in_db"){
+              
+                for(k=0;k<3;k++){
+                  //console.log(sqlstr[k])
+             if (sqlstr[k]=='Progress'){
+                    $("#urls1").append('Route : '+sqlstr[k+1][1]+' , Direction : '+sqlstr[k+1][2]+' , View : '+sqlstr[k+1][3]+' , Resolution : '+sqlstr[k+1][7]+' , environment : '+sqlstr[k+1][8]+' , Progress : '+sqlstr[k+1][4]+'<br>');
                   
 
-                   var rtime=timearr[0][k].replace(/_/g," , ");
-                   if(cam=="All"){
-                   $("#urls1").append('Time  : '+rtime+ ' ('+routesinfo[k][5] + '-' + c2 +')<br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/'+ r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_forward.mp4">Forward<\/a><br>');
-                   $("#urls1").append('<a  target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_backward.mp4">Backward<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_right.mp4">Right<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_left.mp4">Left<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_forward.kml">Forward KML<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_backward.kml">Backward KML<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/' +c2+ '/'+ r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_right.kml">Right KML<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_left.kml">Left KML<\/a><br>');
+                 }
+            if (sqlstr[k]=="Time") {
+              
+              if (k==0) {reso='High'}
+              if (k==2) {reso='Low'}
+              
+              if(cam=="All"){
+                   $("#urls1").append('Time  : '+sqlstr[k+1]+' , '+r2+' , '+dir_1+' , '+cam+' , '+reso+' , '+c2+'<br>');
+
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/'+ r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_forward.mp4">Forward<\/a><br>');
+                   $("#urls1").append('<a  target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_backward.mp4">Backward<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_right.mp4">Right<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_left.mp4">Left<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_forward.kml">Forward KML<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_backward.kml">Backward KML<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/' +c2+ '/'+ r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_right.kml">Right KML<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_left.kml">Left KML<\/a><br>');
                    $("#progress1").html("Please click on the links below to play the video.");
                   
-              }
+                   }
                      if(cam=="Forward"){
-                   $("#urls1").append('Time  : '+rtime+' ('+routesinfo[k][5] + '-' + c2 +')<br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_forward.mp4">Forward<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_forward.kml">Forward KML<\/a><br>');
+
+                   $("#urls1").append('Time  : '+sqlstr[k+1]+' , '+r2+' , '+dir_1+' , '+cam+' , '+reso+' , '+c2+'<br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_forward.mp4">Forward<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_forward.kml">Forward KML<\/a><br>');
                    $("#progress1").html("Please click on the link below to play the video.");
                   
               }
 
        if(cam=="Backward"){
-                   $("#urls1").append('Time  : '+rtime+' ('+routesinfo[k][5] + '-' + c2 +')<br>');
-                   $("#urls1").append('<a  target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/' +c2+ '/'+ r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_backward.mp4">Backward<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_backward.kml">Backward KML<\/a><br>');
+                   $("#urls1").append('Time  : '+sqlstr[k+1]+' , '+r2+' , '+dir_1+' , '+cam+' , '+reso+' , '+c2+'<br>');
+                   $("#urls1").append('<a  target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/' +c2+ '/'+ r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_backward.mp4">Backward<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_backward.kml">Backward KML<\/a><br>');
                    $("#progress1").html("Please click on the link below to play the video.");
                   
               }
        if(cam=="Left"){
-                   $("#urls1").append('Time  : '+rtime+' ('+routesinfo[k][5] + '-' + c2 +')<br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_left.mp4">Left<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_left.kml">Left KML<\/a><br>');
+                   $("#urls1").append('Time  : '+sqlstr[k+1]+' , '+r2+' , '+dir_1+' , '+cam+' , '+reso+' , '+c2+'<br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_left.mp4">Left<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_left.kml">Left KML<\/a><br>');
                    $("#progress1").html("Please click on the link below to play the video.");
                   
               }
        if(cam=="Right"){
-                   $("#urls1").append('Time  : '+rtime+' ('+routesinfo[k][5] + '-' + c2 +')<br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_right.mp4">Right<\/a><br>');
-                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+timearr[0][k]+'_'+ r2 + '_' + dir_1 + '_' + routesinfo[k][5] + '_' + c2 + '_right.kml">Right KML<\/a><br>');
+                   $("#urls1").append('Time  : '+sqlstr[k+1]+' , '+r2+' , '+dir_1+' , '+cam+' , '+reso+' , '+c2+'<br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_right.mp4">Right<\/a><br>');
+                   $("#urls1").append('<a target="_blank"  href="https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/'+c2+ '/' + r2 + '/'+sqlstr[k+1]+'_'+ r2 + '_' + dir_1 + '_' + reso + '_' + c2 + '_right.kml">Right KML<\/a><br>');
                    $("#progress1").html("Please click on the link below to play the video.");
                   
               }
 
             }
-              else {
-                  r_index=k;
-               if (routesinfo[k][0]!=undefined){
-               if (routesinfo[k][1]!=undefined){
-               if (routesinfo[k][2]!=undefined){
-               if (routesinfo[k][3]!=undefined){
-                  
-                  $("#urls1").append('Route : '+routesinfo[k][0]+' , Direction : '+routesinfo[k][1]+' , View : '+routesinfo[k][2]+' , Resolution : '+routesinfo[k][5]+' , Environment : '+routesinfo[k][6]+' , Progress : '+routesinfo[k][3]+'<br>');
-              }}}}
-              } 
 
-          }}else{
-               if (j!=0 && j!=1){
-
-               if (routesinfo[j][0]!=undefined){
-               if (routesinfo[j][1]!=undefined){
-               if (routesinfo[j][2]!=undefined){
-               if (routesinfo[j][3]!=undefined){
-               
-               if (routesinfo[j][4]==1) {
-                   if(routesinfo[j][3]=="Generation completed.")
-                   {
-                  $("#urls").append('<font color="green">Route : '+routesinfo[j][0]+' , Direction : '+routesinfo[j][1]+' , View : '+routesinfo[j][2]+' , Resolution : '+routesinfo[j][5]+' , Environment : '+routesinfo[j][6]+' , Progress : '+routesinfo[j][3]+' Date & Time : '+routesinfo[j][7]+'</font> <br>');
-                   }
-
-                   else{
-                   $("#urls").append('<font color="red">Route : '+routesinfo[j][0]+' , Direction : '+routesinfo[j][1]+' , View : '+routesinfo[j][2]+' , Resolution : '+routesinfo[j][5]+' , Environment : '+routesinfo[j][6]+' , Progress : '+routesinfo[j][3]+' Date & Time : '+routesinfo[j][7]+'</font> <br>');
-                  }
-                  
-
-               }
-
-               else{ 
-                   if(routesinfo[j][3]=="Generation completed."){
-                  $("#urls").append('<font color="green">Route : '+routesinfo[j][0]+' , Direction : '+routesinfo[j][1]+' , View : '+routesinfo[j][2]+' , Resolution : '+routesinfo[j][5]+' , environment : '+routesinfo[j][6]+' , Progress : '+routesinfo[j][3]+' Date & Time : '+routesinfo[j][7]+'</font> <br>');
-                   }else{$("#urls").append('Route : '+routesinfo[j][0]+' , Direction : '+routesinfo[j][1]+' , View : '+routesinfo[j][2]+' , Resolution : '+routesinfo[j][5]+' , Environment : '+routesinfo[j][6]+' , Progress : '+routesinfo[j][3]+' Date & Time : '+routesinfo[j][7]+'<br>');
-               }}
-
-          }}}}}}
-
-          }
-          if (chk==1){
-
-           if(routesinfo[r_index][4]!=1){
-if(routesinfo[r_index][3]!="Please click on generate to start video generation." || routesinfo[r_index][3]!="Generating All.Please check below to see the progress."){
-            if(routesinfo[r_index][3]!="Generation completed."){
-                var r = confirm('Route generation already in progress.\nRoute : '+routesinfo[r_index][0]+' , Direction : '+routesinfo[r_index][1]+' , View : '+routesinfo[r_index][2]+' , Resolution : '+routesinfo[r_index][5]+' , Environment : '+routesinfo[r_index][6]+' , Progress : '+routesinfo[r_index][3]+'\nPress OK to generate new video.');
-                    if (r == true) {
-                      getrouteinfo(1);
-                    }
-
-          }else{
-            var r = confirm('Route : '+routesinfo[r_index][0]+' , Direction : '+routesinfo[r_index][1]+' , View : '+routesinfo[r_index][2]+' , Resolution : '+routesinfo[r_index][5]+' , Environment : '+routesinfo[r_index][6]+'.\nPress OK to generate new video.');
-                    if (r == true) {
-                      getrouteinfo(1);
-            }
-            }
+             } 
           
-        
+
          }else{
-            getrouteinfo(1);
-          }
-
-        }else{
-            getrouteinfo(1);
-          }
-
-        }
+                  $("#urls1").html("");
+                  $("#urls1").append('Route : '+r2+' , Direction : '+dir_1+' , View : '+cam+' , Resolution : '+c1+' , environment : '+c2+' , Progress : Please click on generate to start video generation.<br>');
+            }
          
-       } });
+         console.log(sqlstr[4][0].length)
+          for(k=0;k<sqlstr[4][0].length;k++){
+
+            $("#urls").append('Route : '+sqlstr[4][0][k][1]+' , Direction : '+sqlstr[4][0][k][2]+' , View : '+sqlstr[4][0][k][3]+' , Resolution : '+sqlstr[4][0][k][7]+' , environment : '+sqlstr[4][0][k][8]+' , Progress : '+sqlstr[4][0][k][4]+'<br>');
+
+          }
+
+         } });
        
-     }else{
+       }else{
 
-           $("#urls").html('');
-           $("#urls1").html('');
-           $("#progress").html('');
-           $("#progress1").html('');
+        $("#urls1").html("");
 
-     }}}}}
+       }
+        
+ 
+ };
 
-    }}}}}}  };
 
 
 
@@ -531,15 +457,20 @@ if(routesinfo[r_index][3]!="Please click on generate to start video generation."
       var routedirid = [];
       
       function getrouteinfo(alert_token) {
-        if(alert_token==null || alert_token==undefined){ajax_call(1);}
-        if(alert_token==1){
+        //if(alert_token==null || alert_token==undefined){ajax_call(1);}
+        if(1==1){
         var d = document.getElementById("directionid");
         dir = d.options[d.selectedIndex].value;
 
         var r = document.getElementById("routeid");
         routename = r.options[r.selectedIndex].value;
         camview = document.getElementById("camangle").value;
-
+      /*  if (dir == "West - East") {
+          dir = 'a';
+        }
+        if (dir == "North - South") {
+          dir = 'b';
+        }*/
 
         c1 = document.getElementById("resid").value;
         c2 = document.getElementById("envid").value;
@@ -588,7 +519,7 @@ if(routesinfo[r_index][3]!="Please click on generate to start video generation."
     <div class="container-fluid header-area">
       <div class="pull-left">
         <div class="header-item" style="height:30px;">
-          Choose your route
+          Video generation
         </div>
       </div>
       <div class="pull-right"><a style="color:white;" href="/logout">Logout</a></div><!-- #top-social end -->
@@ -638,7 +569,7 @@ if(routesinfo[r_index][3]!="Please click on generate to start video generation."
   </div>
    <div class="row">
            <div class="col-lg-12">
-            <h5><strong>Recent videos generated or in progress:</strong></h5>
+            <h5><strong>Status of all in progress videos:</strong></h5>
          <div class="panel-body2" style="text-align: left;"  align="center">
         <div id="progress"></div>
       <div id="urls"></div>
@@ -696,3 +627,5 @@ if(routesinfo[r_index][3]!="Please click on generate to start video generation."
 </body>
 {% endif %}
 </html>
+
+

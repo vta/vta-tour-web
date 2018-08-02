@@ -514,8 +514,7 @@ class Google(object):
                     
                 
                 fb_url=getattr(settings, "FB_"+env.upper()+"", None)
-
-                
+               
                 url = fb_url+routename+"/"+dirid+""
 
                 url_forward=routename+'/'+current_date+'_'+video+'_forward.mp4'

@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
-
-#PROJECT PATH
-sys.path.append("ENTER PROJECT PATH")
+sys.path.append("/home/crowdplat/vta")
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vta.settings")
     try:

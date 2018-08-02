@@ -141,7 +141,24 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#Production
+FBC_PRODUCTION = "https://vtavirtualtransit-7c904.firebaseio.com"
+FB_PRODUCTION  = "https://vtavirtualtransit-7c904.firebaseapp.com/api/route-details/"
 
+PM_PRODUCTION = "0158af7a-c003-ae16-f5f4-3921ea149237"
+
+AWS_PRODUCTION_KEY = 'AKIAJBDVJQ6FJV6PVS7A'
+AWS_PRODUCTION_SECRET ='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'
+
+
+#Development
+FBC_DEVELOPMENT = "https://vtavirtualtransit-7c904.firebaseio.com"
+FB_DEVELOPMENT = "https://vtavirtualtransit-7c904.firebaseapp.com/api/route-details/"
+
+PM_DEVELOPMENT = "0158af7a-c003-ae16-f5f4-3921ea149237"
+
+AWS_DEVELOPMENT_KEY = 'AKIAJBDVJQ6FJV6PVS7A'
+AWS_DEVELOPMENT_SECRET ='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'
 AWS_KEY = 'AKIAJBDVJQ6FJV6PVS7A'
 AWS_SECRET ='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'
 FB_LINK = 'https://vtavirtualtransit-7c904.firebaseio.com'

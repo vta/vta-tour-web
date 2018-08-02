@@ -20,17 +20,25 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fm$0d#@^^lp4fbqt&1@c+2$z1d%dcf9^ryw#zpvo7s0e!pz4)n'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 #ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
+DB_HOST = ""
+DB_USER = ""
+DB_PASSWORD = ""
+DB_DB = ""
+G_KEY= ""
 
+FB_LINK = ""
+FB_URL = ""
 
+PM_TOKEN = ""
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -73,6 +81,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'vta.wsgi.application'
 
+
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    }
+}
 
 
 # Password validation
@@ -118,52 +141,25 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#Production
+FBC_PRODUCTION = ""
+FB_PRODUCTION  = ""
+
+PM_PRODUCTION = ""
+
+AWS_PRODUCTION_KEY = ''
+AWS_PRODUCTION_SECRET =''
 
 
-#--------------------VTA CREDENTIALS-----------------------------
+#Development
+FBC_DEVELOPMENT = ""
+FB_DEVELOPMENT = ""
 
-# ADD SERVERS IP ADDRESS TO ALLOWED_HOSTS
-ALLOWED_HOSTS = ['Server ip address']
+PM_DEVELOPMENT = ""
 
-#DATABASE AUTHENTICATION CREDENTIALS
-DB_HOST = "database hostname"
-DB_USER = "Username"
-DB_PASSWORD = "Password"
-DB_DB = "Database name"
-
-G_KEY= "Google premium api key"
-
-#PRODUCTION CREDENTIALS
-FBC_PRODUCTION = "firebase authentication url for production"
-FB_PRODUCTION  = "firebase rest api url for backupdate in backend for production"
-
-
-AWS_PRODUCTION_KEY = 'AWS key for production'
-AWS_PRODUCTION_SECRET ='AWS secret for production'
-
-
-#DEVELOPEMENT CREDENTIALS
-FBC_DEVELOPMENT = "firebase authentication url for development"
-FB_DEVELOPMENT = "firebase rest api url for backupdate in backend for development"
-
-
-AWS_DEVELOPMENT_KEY = 'AWS key for development'
-AWS_DEVELOPMENT_SECRET ='AWS secret for development'
-
-API_URL= "S3 bucket url"
-API_KEY = "rest api key"
-
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': DB_DB,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': '',
-    }
-}
-
+AWS_DEVELOPMENT_KEY = ''
+AWS_DEVELOPMENT_SECRET =''
+AWS_KEY = ''
+AWS_SECRET =''
+FB_LINK = ''
 LOGIN_REDIRECT_URL = 'home'
