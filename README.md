@@ -1,8 +1,8 @@
-# VTA Tour #
+# VTA Tour Web#
 
 ## What is this repository for? ##
 
-* Repository for **VTA Tour** website. 
+* Repository for **VTA Tour** website.
 * Version: 1.0
 
 ## How do I get set up? ##
