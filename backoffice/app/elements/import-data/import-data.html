@@ -242,7 +242,7 @@
       <br/><br/>
       <div class="clear-break">
         <br/>
-      &nbsp; Step 3: Click on "Batch Import Sroutes" to upload data in firebase database:
+      &nbsp; Step 3: Click on "Batch Import Routes" to upload data in firebase database:
       <br/>
       <div class="add-stop-wrapper">
         <paper-button  on-click="_batchImportRoutesListData" >
@@ -251,15 +251,19 @@
       </div>
       <br/>
       <br/>
-      <!-- <div class="clear-break"></div>
+      <div class="clear-break"></div>
       <br/>
-      &nbsp; Step 4(optional): Click on "Batch Import Stops" to upload data in firebase database:
+      &nbsp; Step 4 (Optional): Click on "Batch Import Stops" to upload data in firebase database:
       <br/>
       <div class="add-stop-wrapper">
         <paper-button  on-click="_batchImportStopListData" >
           <iron-icon icon="file-download" class="download-icon"></iron-icon>Batch Import Stops
         </paper-button>
-      </div> -->
+      </div>
+      <div  style="clear:both;">
+        <br/>
+        WARNING: Batch Import Stops will take a long time. Use this only if there is change in stops information. If you perform this option, please update Stops using Preview Route List in Video tab by checking the "Update Stops Only" checkbox and then subsequently execute Batch Update.
+      </div>
 
 
       <br/>
@@ -1113,6 +1117,9 @@
           //firebase.database().ref().update(update);
           var firebaseDb = this.$.routeInfo.db;
           var firebaseDbRef = firebaseDb.ref();
+          //var geoFire = new GeoFire(firebaseDbRef);
+          stopInfo.g = Geohash.encode(stopInfo.lat,stopInfo.lng, 10);
+          stopInfo.l = [stopInfo.lat,stopInfo.lng]
           update['stops/' + code] = stopInfo;
           console.log('check below update deep path');
           console.log(update)
@@ -1122,7 +1129,15 @@
             } else {
               console.log('Write Success');
             }
+            // geoFire.set(code, [stopInfo.lat, stopInfo.lng]).then(function() {
+            //   console.log("Provided key has been added to GeoFire");
+            //   return callback(null, true);
+            // }, function(error) {
+            //   console.log("Error: " + error);
+            //   return callback(null, true);
+            // });
             return callback(null, true);
+
           });
         },
         _batchImportStopListData:function(){

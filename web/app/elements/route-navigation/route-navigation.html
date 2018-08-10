@@ -390,7 +390,7 @@
                 <h2>{{poi.name}}</h2>
                 <span>{{poi.formatted_address}}</span>
               </google-map-marker>
-            </template>
+        </template>
         <template is="dom-repeat" items="{{_meetUps}}" as="meetUpObject">
               <google-map-marker latitude="{{meetUpObject.lat}}" longitude="{{meetUpObject.lon}}"
                 click-events on-google-map-marker-click="_onMeetUpClick" icon="/images/meetup.png">
@@ -404,7 +404,7 @@
                 <h2>{{cordObject.properties.name}}</h2>
                 <span>Bikes Available: {{cordObject.properties.num_bikes_available}}, Docks Available: {{cordObject.properties.num_docks_available}}</span>
               </google-map-marker>
-            </template>
+        </template>
         <template is="dom-repeat" items="{{_customPois}}" as="_customPoi">
                 <template is="dom-if" if="[[_isValidCords(_customPoi.latitude,_customPoi.longitude)]]">
                     <google-map-marker latitude="{{_customPoi.latitude}}" longitude="{{_customPoi.longitude}}"
