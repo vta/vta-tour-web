@@ -1348,11 +1348,29 @@
                  //self._combineRouteAndRouteDetails(routes,routesDetailses);
                  if(routeDetailsData && ((routeDetailsData.a && routeDetailsData.a.stops) || (routeDetailsData.b && routeDetailsData.b.stops))){
                    fullRouteDetails.routeDetails = routeDetailsData;
-                   finalSuitbleRoutes.push(fullRouteDetails);
                  }
-                 startMerge(index+1);
+                 if(self._updateStopsOnly){
+                     self.$.routeDataProcessing.getStoredValue('/route-details/'+fullRouteDetails.code)
+                       .then(function(routeDetailsDataExisting) {
+                         if(routeDetailsData){
+                           fullRouteDetails.existingRouteDetails = routeDetailsDataExisting;
+                         }
+                         finalSuitbleRoutes.push(fullRouteDetails);
+                         startMerge(index+1);
+                       })
+                       .catch(function(error) {
+                         console.log('error');
+                         console.log(error);
+                       });
+                 }else{
+                    finalSuitbleRoutes.push(fullRouteDetails);
+                    startMerge(index+1);
+                 }
+
+
+
                 }).catch(function(error) {
-                  //console.log(error);
+                  console.log(error);
                 });
             }else{
               console.log('Main Routes selection Done');
@@ -1461,7 +1479,15 @@
           if (routeDetails.a && routeDetails.a.stops && routeDetails.a.stops.length) {
             for (var a = 0; a < routeDetails.a.stops.length; a++) {
               var tempStopObject = routeDetails.a.stops[a];
-              var point = self.$.mapsUtils.getClosestPoint(tempStopObject.lat, tempStopObject.lng, routeDetails.a.videoGeoPoints);
+              var videoGeoPointsA = routeDetails.a.videoGeoPoints;
+              if(self._updateStopsOnly==true && fullRouteData &&
+                fullRouteData.existingRouteDetails &&
+                fullRouteData.existingRouteDetails.a &&
+                fullRouteData.existingRouteDetails.a.videoGeoPoints
+              ){
+                videoGeoPointsA = fullRouteData.existingRouteDetails.a.videoGeoPoints;
+              }
+              var point = self.$.mapsUtils.getClosestPoint(tempStopObject.lat, tempStopObject.lng, videoGeoPointsA);
               var sec = parseInt(point.key);
               if (!isNaN(sec)) {
                 routeDetails.a.stops[a].sec = parseInt(point.key);
@@ -1475,7 +1501,16 @@
           if (routeDetails.b && routeDetails.b.stops && routeDetails.b.stops.length) {
             for (var b = 0; b < routeDetails.b.stops.length; b++) {
               var tempStopObject = routeDetails.b.stops[b];
-              var point = self.$.mapsUtils.getClosestPoint(tempStopObject.lat, tempStopObject.lng, routeDetails.b.videoGeoPoints);
+
+              var videoGeoPointsB = routeDetails.b.videoGeoPoints;
+              if(self._updateStopsOnly==true && fullRouteData &&
+                fullRouteData.existingRouteDetails &&
+                fullRouteData.existingRouteDetails.b &&
+                fullRouteData.existingRouteDetails.b.videoGeoPoints
+              ){
+                videoGeoPointsB = fullRouteData.existingRouteDetails.b.videoGeoPoints;
+              }
+              var point = self.$.mapsUtils.getClosestPoint(tempStopObject.lat, tempStopObject.lng, videoGeoPointsB);
               var sec = parseInt(point.key);
               if (!isNaN(sec)) {
                 routeDetails.b.stops[b].sec = parseInt(point.key);

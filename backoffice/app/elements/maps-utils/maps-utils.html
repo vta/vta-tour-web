@@ -20,6 +20,8 @@
        * @param points Source on geo points to fix the result point
        */
       getClosestPoint : function(lat, lng, points) {
+        lat = parseFloat(lat);
+        lng = parseFloat(lng);
         var distances = new Array();
         var distance_keys = new Array();
         var R = 6371; // Earth radio in km
