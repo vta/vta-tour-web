@@ -87,7 +87,7 @@ app.get('/api/google-pois/:lat/:lon/:type/:token?', (req, res) => {
   const lon = req.params.lon;
   const type = req.params.type;
   const token = req.params.token;
-  const apiKey = req.headers.apiKey;
+  const apiKey = req.get("x-api-key");
 
 
 var options = {
