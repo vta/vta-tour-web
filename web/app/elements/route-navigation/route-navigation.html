@@ -261,7 +261,50 @@
 
       }
 
+      #saveOperationResultModal {
+        width: auto;
+        background-color: transparent;
+        color: var(--vta-white);
+        box-shadow: none;
+        z-index:9999999999;
+      }
 
+      #saveOperationResultModal .icon {
+        text-align: center;
+      }
+
+      #saveOperationResultModal iron-icon {
+        width: 140px;
+        height: 140px;
+        padding: 20px;
+        text-align: center;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+      }
+
+      #saveOperationResultModal .message-wrapper.success iron-icon {
+        background-color: var(--primary-color);
+      }
+
+      #saveOperationResultModal .message-wrapper.error iron-icon {
+        background-color: var(--secondary-color);
+      }
+
+      #saveOperationResultModal .message {
+        text-align: center;
+        font-size: 2.5em;
+        line-height: 1;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      #saveOperationResultModal .dynamic-message{
+          text-align: center;
+      }
+
+      #ref-link{
+        color: #ffff;
+      }
 
     </style>
       <iron-media-query query="(min-width: 600px) and (orientation: landscape)" query-matches="{{isDesktop}}"></iron-media-query>
@@ -290,7 +333,7 @@
       <div class="top-header">
               <div class="container-fluid header-area">
                   <div class="pull-left">
-                      <div class="header-item"><img class="arrow-icons" src="../../images/back.svg" alt="" on-click="_goBack" id="secondery-back-link">[[_routeDirection]] / V Tour /  [[_routeInfo.name]]</div>
+                      <div class="header-item"><img class="arrow-icons" src="../../images/back.svg" alt="" on-click="_goBack" id="secondery-back-link"><a href="http://www.vta.org/routes/rt[[_routeInfo.code]]" target="_blank" id="ref-link">[[_routeDirection]] / V Tour /  [[_routeInfo.name]]</a></div>
                   </div>
                   <div class="pull-right  ">
                   </div>
@@ -318,7 +361,7 @@
     </div>
 
     <div class="map-wrapper">
-      <google-map-search id="search" map="[[_map]]" api-key="[[_google_api_key]]" radius="500" results="{{_pois}}" mapType="satellite">
+      <google-map-search id="search" map="[[_map]]" api-key="[[_google_api_key]]" radius="500" mapType="satellite">
       </google-map-search>
 
       <google-map id="map" map="{{_map}}" api-key="[[_google_api_key]]" additional-map-options='{"zoomControl":"true"}' mapType="satellite" disable-zoom>
@@ -384,13 +427,13 @@
         </template>
         </template>
 
-        <template is="dom-repeat" items="{{_pois}}" as="poi">
+        <!-- <template is="dom-repeat" items="{{_pois}}" as="poi">
               <google-map-marker latitude="{{poi.latitude}}" longitude="{{poi.longitude}}"
                 click-events on-google-map-marker-click="_onPoiClick" icon="{{_getPoiIcon()}}">
                 <h2>{{poi.name}}</h2>
                 <span>{{poi.formatted_address}}</span>
               </google-map-marker>
-            </template>
+            </template> -->
         <template is="dom-repeat" items="{{_meetUps}}" as="meetUpObject">
               <google-map-marker latitude="{{meetUpObject.lat}}" longitude="{{meetUpObject.lon}}"
                 click-events on-google-map-marker-click="_onMeetUpClick" icon="/images/meetup.png">
@@ -421,7 +464,7 @@
   </div>
 
   <div class="poi-wrapper">
-    <poi-list id="pois" pois="{{_pois}}" selected="{{_selectedPoi}}"></poi-list>
+    <poi-list id="pois" pois="{{_pois}}" selected="{{_selectedPoi}}" category="{{_selectedPoicat}}" showmore="{{_showmore}}"></poi-list>
     <poi-detail id="poiDetails" place-details="{{_selectedPoiDetails}}" lat-origin="{{_nextStopGeoPoint.lat}}" lng-origin="{{_nextStopGeoPoint.lng}}"></poi-detail>
   </div>
 
@@ -520,6 +563,26 @@
         </paper-button>
       </div> -->
   <maps-utils id="mapsUtils" on-pois-loaded="_poisLoaded"></maps-utils>
+  <paper-dialog id="saveOperationResultModal" modal>
+    <template is="dom-if" if="{{_operationSuccess}}">
+      <div class="message-wrapper success">
+        <div class="icon">
+          <iron-icon icon="icons:check"></iron-icon>
+        </div>
+        <div class="message">Done</div>
+        <div class="dynamic-message">{{_operationMessageDetail}}</div>
+      </div>
+    </template>
+    <template is="dom-if" if="{{!_operationSuccess}}">
+      <div class="message-wrapper success">
+        <div class="icon">
+          <iron-icon icon="icons:cached"></iron-icon>
+        </div>
+        <div class="message">Loading...</div>
+        <div class="dynamic-message">{{_operationMessageDetail}}</div>
+      </div>
+    </template>
+  </paper-dialog>
   </template>
 </dom-module>
 
@@ -653,6 +716,14 @@
           _selectedPoi: {
             type: Object,
             observer: '_selectedPoiChange'
+          },
+          _selectedPoicat: {
+            type: String,
+            observer: '_selectedPoicatChange'
+          },
+          _showmore: {
+            type: String,
+            observer: '_showmoreChange'
           },
           _selectedPoiMarker: {
             type: Object
@@ -898,6 +969,7 @@
         },
 
         _videoCurrentTimeChange: function(newVideoCurrentTime) {
+          this.currentVideoTime = newVideoCurrentTime;
           if (!this._routeDetails || !this.player) {
             return;
           }
@@ -1131,7 +1203,7 @@
           this._isVideoPlaying = false;
           // this.$.routeVideo.pause();
           if (this.$.mapsUtils && this._mapsApiLoaded && this._map) {
-            this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
+            //this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
             this._customPois = this._customPoisOrigin;
             console.log('Custom Pois');
             console.log(this._customPois);
@@ -1154,7 +1226,7 @@
           // this.$.routeVideo.pause();
           // this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
           if (this.$.mapsUtils && this._mapsApiLoaded && this._map) {
-            this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
+            //this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
             this._customPois = this._customPoisOrigin;
             this._getNearByMeetUps(this._currentLat, this._currentLng);
             this._getNearByCoords(this._currentLat, this._currentLng);
@@ -1165,8 +1237,9 @@
         },
         _stopVideo: function() {
           var self = this;
-
+          this.setUpdatedPois([]);
           this.player.pause();
+          this.$.pois._clearSelection();
           //alert();
           if (!this._currentLat && !this._currentLng) {
             var point = this._routeDetails.videoGeoPoints[0];
@@ -1179,7 +1252,7 @@
           currentLngForPoi = this._currentLng;
           //this.$.routeVideo.pause();
           if (this.$.mapsUtils && this._mapsApiLoaded && this._map) {
-            this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
+            //this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
             this._customPois = this._customPoisOrigin;
             this._getNearByMeetUps(this._currentLat, this._currentLng);
             this._getNearByCoords(this._currentLat, this._currentLng);
@@ -1559,12 +1632,133 @@
           // this._onPoiClick(e);
         },
 
+        setUpdatedPois:function(fullPois){
+          console.log('Setting Pois:');
+          this.set("_pois",[]);
+          //this._pois = fullPois;
+          this.set("_pois",fullPois);
+          this.$.pois._forceUpdatePois([]);
+          this.$.pois._forceUpdatePois(fullPois);
+          console.log('Final Pois');
+          console.log(this._pois);
+        },
+        _showOperationResultModal: function(isSuccess, operationDetailMessage) {
+          this.$.saveOperationResultModal.open();
+          var self = this;
+          this._operationSuccess = isSuccess;
+          this._operationMessageDetail = operationDetailMessage;
+        },
+        _closeOperationResultModal: function() {
+          this.$.saveOperationResultModal.close();
+        },
+        _getNearByPois: function(lat, lon, type,showMore) {
+          $('#custom_message_for_poi').text("");
+          this._showOperationResultModal(false,"Loading POIs");
+          var self = this;
+          var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": "/api/google-pois/" + lat + "/" + lon + "/"+type,
+            "method": "GET",
+            "headers": {
+              "cache-control": "no-cache",
+            }
+          }
+          if(this.nextPagePoiToken){
+            settings.url = settings.url+"/"+this.nextPagePoiToken;
+          }
+          $.ajax(settings).done(function(response) {
+            console.log('check meetups data below');
+            console.log(response);
+            if (response) {
+              if(response.next_page_token){
+                self.nextPagePoiToken = response.next_page_token;
+                $('#show_more_poi').show();
+                //$('#show_more_poi').off();
+                // document.getElementById("show_more_poi").addEventListener("click", function(){
+                //   self._getNearByPois(lat,lon,type,true);
+                // });
+
+                // $('#show_more_poi').on('click',function(){
+                //   self._getNearByPois(lat,lon,type,true);
+                // });
+              }else{
+                self.nextPagePoiToken = "";
+                $('#show_more_poi').hide();
+              }
+
+              if(response.results){
+                var results = response.results;
+                var mapCounter = 0;
+                var pois = [];
+                if(showMore){
+                  pois = self.backUpPois;
+                }else{
+                  self.backUpPois = [];
+                }
+                if(!results.length){
+                  $('#custom_message_for_poi').text("There is no POI for this category");
+                }
+                for(var i=0;i<results.length;i++){
+                  var result = results[i];
+                  result.latitude = result.geometry.location.lat;
+                  result.longitude = result.geometry.location.lng;
+                  if (result.photos && result.photos.length > 0) {
+                    // result.imageUrl = result.photos[0].getUrl({
+                    //   'maxWidth': 100,
+                    //   'maxHeight': 100
+                    // });
+
+                    result.imageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&maxheight=100&photoreference="+result.photos[0].photo_reference+"&sensor=false&key="+self._google_api_key
+                  }
+                  pois.push(result);
+
+                }
+                self.backUpPois = pois;
+                self.setUpdatedPois(pois);
+                self.$.saveOperationResultModal.close();
+                // if(self.nextPagePoiToken){
+                //   setTimeout(function(){
+                //     self._getNearByPois(lat,lon,type,true);
+                //   }, 2000);
+                // }else{
+                //   self.setUpdatedPois(pois);
+                //   self.$.saveOperationResultModal.close();
+                // }
+              }
+
+
+
+
+              //self.pois = response.features;
+
+              console.log('check actual pois Data');
+              console.log(response);
+            }
+          });
+        },
+        _selectedPoicatChange:function(newSelectedPoiCategory){
+          console.log('Selected POI category: '+newSelectedPoiCategory);
+          this.selectedPoiCategory = newSelectedPoiCategory;
+          if(newSelectedPoiCategory){
+            this.nextPagePoiToken = "";
+            this._getNearByPois(this._currentLat,this._currentLng,newSelectedPoiCategory);
+          }
+        },
+        _showmoreChange:function(showMoreValue){
+          console.log('Show more clicked!',showMoreValue);
+          this._getNearByPois(this._currentLat,this._currentLng,this.selectedPoiCategory,true);
+        },
         _selectedPoiChange: function(newSelectedPoi) {
+          console.log('check once');
+          console.log(newSelectedPoi);
           if (newSelectedPoi) {
             var getDetailsPromise = this.$.search.getDetails(newSelectedPoi.place_id);
             var self = this;
 
             getDetailsPromise.then(function(data) {
+              data.latitude = newSelectedPoi.latitude;
+              data.longitude = newSelectedPoi.longitude;
               self._selectedPoiDetails = data;
 
               // When is mobile hide the poi list and show the poi details
@@ -1577,6 +1771,8 @@
 
             // Send the event to Google Analytics
             ga('send', 'event', 'POI', 'selected', newSelectedPoi.name);
+          }else{
+            this._selectedPoiDetails = null;
           }
         },
 
@@ -1745,8 +1941,21 @@
           // this._assignSource(this.$.videoViewSelection.value);
           // this._videoCurrentTimeChange(0);
           // this._pauseVideo();
+          var self = this;
+          var oldPlayerTime = this.currentVideoTime || 0;
           this._assignSource(src);
-          this._videoCurrentTimeChange(self._videoStartTime);
+          console.log('Old View: '+this.old_view+' ,Current View '+this.current_view + ',Current Time: '+oldPlayerTime);
+          if(this.old_view=='leftView' && this.current_view=='rightView'){
+              this._videoCurrentTimeChange(oldPlayerTime);
+            // console.log('View Condition Success');
+            // //this._videoCurrentTimeChange(this.currentVideoTime-1);
+            // //this.player.currentTime(this.currentVideoTime-1);
+            // setTimeout(function(){
+            //   self.player.currentTime(self.currentVideoTime-1);
+            // },2000);
+          }else{
+            this._videoCurrentTimeChange(this._videoStartTime);
+          }
           this._pauseVideo();
         },
         _goBack: function() {
@@ -1823,6 +2032,8 @@
 
           $(document).ready(function(e) {
             $('.SelectViewItems').hide();
+            self.old_view = "frontView";
+            self.current_view = "frontView";
             $('.SelectViewItems').on('click', function(e) {
               console.log('check below data');
               console.log(self._routeDetails);
@@ -1830,6 +2041,9 @@
 
               var videoSource = $(this).attr('data-video');
               var viewType = $(this).attr('id');
+              self.old_view = self.current_view;
+              self.current_view = viewType;
+
               $('#viewSelectionText').text($(this).find('a').text());
               self._videoViewChange(videoSource);
               self._changeGeoPointsUi(viewType);

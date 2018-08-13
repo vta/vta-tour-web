@@ -8,13 +8,18 @@
         width: 100%;
       }
     </style>
-    <paper-dropdown-menu id="poisFilter" label="{{label}}" placeholder="Choose the type" on-iron-select="_typeDropdownSelect">
+
+    <paper-input-autocomplete id="poitypesAutocomplete" label="Types" placeholder="Choose the type"
+      search-property="name" value="{{_selectedPoiCategory}}" source={{_customPoisTypes}} suggestions-in-overlay="true"
+      display-options-on-focus="true">
+    </paper-input-autocomplete>
+    <!-- <paper-dropdown-menu id="poisFilter" label="{{label}}" placeholder="Choose the type" on-iron-select="_typeDropdownSelect">
       <paper-listbox id="poisFilterDropdownListBox" class="dropdown-content">
         <template is="dom-repeat" items="{{_poisTypes}}">
           <paper-item value="[[item.id]]">[[item.name]]</paper-item>
         </template>
   </paper-listbox>
-  </paper-dropdown-menu>
+  </paper-dropdown-menu> -->
   </template>
   <script>
     (function() {
@@ -31,6 +36,10 @@
             type: Array,
             observer: '_poisChange'
           },
+          _selectedPoiCategory: {
+            type: Object,
+            observer: '_selectedPoiCategoryChange'
+          },
           selectedFilter: {
             type: String,
             notify: true
@@ -41,10 +50,10 @@
           _customPoisTypes: {
             type: Array,
             value: [
-              {
-                id: '',
-                name: 'All'
-              },
+              // {
+              //   id: '',
+              //   name: 'All'
+              // },
               {
                 "id": "accounting",
                 "name": "Accounting"
@@ -410,8 +419,21 @@
         },
 
         clearFilter: function() {
-          this.$.poisFilter._setSelectedItem();
-          this.$.poisFilterDropdownListBox.selected = -1;
+          //this.$.poisFilter._setSelectedItem();
+          //this.$.poisFilterDropdownListBox.selected = -1;
+        },
+        _selectedPoiCategoryChange:function(newPoiCategory){
+
+          console.log(newPoiCategory);
+          if(newPoiCategory && newPoiCategory.id){
+              this.selectedFilter = newPoiCategory.id;
+          }else {
+              this.selectedFilter = "";
+          }
+        },
+
+        _clearSelection:function(){
+          this.$.poitypesAutocomplete.clear();
         },
 
         _poisChange: function(newPois) {
@@ -426,30 +448,22 @@
               name: 'All'
             });
 
-            for (var indexPoi = 0; indexPoi < newPois.length; indexPoi++) {
-              if (newPois[indexPoi].types && newPois[indexPoi].types.length > 0) {
-                actualPoiTypes = newPois[indexPoi].types;
-                for (var indexType = 0; indexType < actualPoiTypes.length; indexType++) {
-                  if(currentPois.indexOf(actualPoiTypes[indexType])<0){
-                    var poiType = this._getPoiTypeObj(actualPoiTypes[indexType]);
-                    poiTypesMap[poiType.id] = poiType.name;
-                    this.push('_poisTypes', poiType);
-                    currentPois.push(actualPoiTypes[indexType])
-                  }
-
-                }
-
-                // for (var indexType = 0; indexType < actualPoiTypes.length; indexType++) {
-                //   if (!poiTypesMap[actualPoiTypes[indexType]]) {
-                //     var poiType = this._getPoiTypeObj(actualPoiTypes[indexType]);
-                //     poiTypesMap[poiType.id] = poiType.name;
-                //     console.log('Must check below');
-                //     console.log(poiType.id);
-                //     this.push('_poisTypes', poiType);
-                //   }
-                // }
-              }
-            }
+            // for (var indexPoi = 0; indexPoi < newPois.length; indexPoi++) {
+            //   if (newPois[indexPoi].types && newPois[indexPoi].types.length > 0) {
+            //     actualPoiTypes = newPois[indexPoi].types;
+            //     for (var indexType = 0; indexType < actualPoiTypes.length; indexType++) {
+            //       if(currentPois.indexOf(actualPoiTypes[indexType])<0){
+            //         var poiType = this._getPoiTypeObj(actualPoiTypes[indexType]);
+            //         poiTypesMap[poiType.id] = poiType.name;
+            //         this.push('_poisTypes', poiType);
+            //         currentPois.push(actualPoiTypes[indexType])
+            //       }
+            //
+            //     }
+            //
+            //
+            //   }
+            // }
           }
         },
 
