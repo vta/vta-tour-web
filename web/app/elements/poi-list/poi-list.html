@@ -53,18 +53,31 @@
         --iron-icon-width: 40px;
       }
 
+      #show_more_poi{
+        margin-left: 4%;
+        font-size: 16px;
+        color: #45B5E3;
+        cursor: pointer;
+        display:none;
+      }
+
+      #custom_message_for_poi{
+        margin-left: 4%;
+        font-size: 14px;
+      }
+
     </style>
     <div class="poi-filter-wrapper">
       <poi-filter id="poisFilter" label="Category" pois="{{pois}}" selected-filter="{{_selectedPoiFilter}}"></poi-filter>
     </div>
 
-    <template id="poisList" is="dom-repeat" items="{{pois}}" as="poi" filter="_filterPois">
+    <template id="poisList" is="dom-repeat" items="[[poisForShow]]" as="poi">
       <paper-item on-click="_onPoiClick" class="paperListItem">
-        <iron-image src="{{poi.imageUrl}}" preload sizing="cover" item-icon placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5b3V0cyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgOTYgNzIiPjxkZWZzPjxzdHlsZT4uY2xzLTF7b3BhY2l0eTowLjU0O30uY2xzLTJ7ZmlsbDojZGJkYmRkO30uY2xzLTN7ZmlsbDojZmZmO308L3N0eWxlPjwvZGVmcz48dGl0bGU+aW1hZ2VuX2RlZmF1bHRfc21hbGw8L3RpdGxlPjxyZWN0IGNsYXNzPSJjbHMtMiIgd2lkdGg9Ijk2IiBoZWlnaHQ9IjcyIi8+PHBvbHlnb24gY2xhc3M9ImNscy0zIiBwb2ludHM9IjEwLjkzIDQ5LjUxIDg0LjM2IDQ5LjUxIDc4Ljc2IDI4LjM3IDcyLjk2IDMzLjczIDY2LjExIDIyLjAyIDMzLjUgNDEuNzYgMjAuNzkgMzcuMDQgMTAuOTMgNDkuNTEiLz48ZWxsaXBzZSBjbGFzcz0iY2xzLTMiIGN4PSIzMy41MSIgY3k9IjI3LjQxIiByeD0iNS4yIiByeT0iNS4xNCIvPjwvc3ZnPg=="></iron-image>
+        <iron-image src="[[poi.imageUrl]]" preload sizing="cover" item-icon placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5b3V0cyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgOTYgNzIiPjxkZWZzPjxzdHlsZT4uY2xzLTF7b3BhY2l0eTowLjU0O30uY2xzLTJ7ZmlsbDojZGJkYmRkO30uY2xzLTN7ZmlsbDojZmZmO308L3N0eWxlPjwvZGVmcz48dGl0bGU+aW1hZ2VuX2RlZmF1bHRfc21hbGw8L3RpdGxlPjxyZWN0IGNsYXNzPSJjbHMtMiIgd2lkdGg9Ijk2IiBoZWlnaHQ9IjcyIi8+PHBvbHlnb24gY2xhc3M9ImNscy0zIiBwb2ludHM9IjEwLjkzIDQ5LjUxIDg0LjM2IDQ5LjUxIDc4Ljc2IDI4LjM3IDcyLjk2IDMzLjczIDY2LjExIDIyLjAyIDMzLjUgNDEuNzYgMjAuNzkgMzcuMDQgMTAuOTMgNDkuNTEiLz48ZWxsaXBzZSBjbGFzcz0iY2xzLTMiIGN4PSIzMy41MSIgY3k9IjI3LjQxIiByeD0iNS4yIiByeT0iNS4xNCIvPjwvc3ZnPg=="></iron-image>
         <paper-item-body two-line>
-          <div class="name">{{poi.name}}</div>
-          <template is="dom-if" if="{{poi.rating}}">
-            <icon-rate rate="{{poi.rating}}"></icon-rate>
+          <div class="name">[[poi.name]]</div>
+          <template is="dom-if" if="[[poi.rating]]">
+            <icon-rate rate="[[poi.rating]]"></icon-rate>
           </template>
           <paper-button>
             <iron-icon icon="icons:chevron-right"></iron-icon>
@@ -72,6 +85,8 @@
         </paper-item-body>
       </paper-item>
     </template>
+    <span id="custom_message_for_poi"></span>
+    <a href="javascript:void(0);" id="show_more_poi" on-click="_loadMore" >Show more...</a>
   </template>
   <script>
     Polymer({
@@ -81,10 +96,21 @@
           type : Array,
           observer: '_poisChange'
         },
+        poisForShow : {
+          type : Array,
+        },
         selected : {
           type : Object,
           notify: true,
           value : null
+        },
+        category : {
+          type : String,
+          notify: true,
+        },
+        showmore : {
+          type : String,
+          notify: true,
         },
         _selectedPoiFilter: {
           type: String,
@@ -93,9 +119,39 @@
         }
       },
 
+
+      _loadMore:function(e){
+        if(!this.showmore){
+
+          this.showmore = "+";
+        }else{
+          this.showmore = this.showmore + "+";
+        }
+
+      },
+      _forceUpdatePois:function(newPois){
+        console.log('forcefully updating pois');
+        console.log(newPois);
+        //this.poisForShow = newPois;
+        this.set('poisForShow', []);
+        //this.fire('poisForShow', newPois);
+        //this.$.poisList.render();
+        this.set('selected', null);
+        for(var i=0;i<newPois.length;i++){
+          var poi = newPois[i];
+          this.push('poisForShow', poi);
+        }
+      },
+      _clearSelection:function(){
+        this.$.poisFilter._clearSelection();
+      },
+
       _poisChange: function(newPois) {
-        this._selectedPoiFilter = '';
-        this.$.poisFilter.clearFilter();
+        //this._selectedPoiFilter = '';
+        //this.$.poisFilter.clearFilter();
+        console.log('Changed Poi List');
+        console.log(newPois);
+        //this.poisForShow = newPois;
         setTimeout(function(){
           if($('.paperListItem').length){
             var screenWidth = $(window).width();
@@ -104,6 +160,7 @@
             }
           }
         }, 1000);
+        //this.$.poisList.render();
       },
 
       _computeRating : function(rating) {
@@ -115,19 +172,24 @@
       },
 
       _selectedPoiFilterChange: function(newSelectedPoiFilter) {
-        this.$.poisList.render();
+        //this.$.poisList.render();
+        console.log('filter: '+newSelectedPoiFilter)
+        this.category = newSelectedPoiFilter;
+        this.set('category', newSelectedPoiFilter);
+        this.fire('category', newSelectedPoiFilter);
       },
 
       _filterPois: function(item) {
-        if (item.types && item.types.length > 0) {
-          for (var indexType = 0; indexType < item.types.length; indexType++) {
-            if (item.types[indexType].indexOf(this._selectedPoiFilter) != -1) {
-              return true;
-            }
-          }
-        }
-
-        return false;
+        return true;
+        // if (item.types && item.types.length > 0) {
+        //   for (var indexType = 0; indexType < item.types.length; indexType++) {
+        //     if (item.types[indexType].indexOf(this._selectedPoiFilter) != -1) {
+        //       return true;
+        //     }
+        //   }
+        // }
+        //
+        // return false;
       }
     });
   </script>

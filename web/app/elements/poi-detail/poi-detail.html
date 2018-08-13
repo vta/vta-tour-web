@@ -76,6 +76,13 @@
           height: 230px;
           width: 100%
         }
+
+      }
+      google-map {
+        height: 300px;
+      }
+      google-map,.map_wrapper{
+        height: 300px !important;
       }
     </style>
     <template is="dom-if" if="{{_placeDetailsInfo}}">
@@ -147,6 +154,29 @@
           </div>
         </div>
       </template>
+        <template is="dom-if" if="[[_isValidCords(_placeDetailsInfo.latitude,_placeDetailsInfo.longitude)]]">
+          <google-map
+            id="poi-details-map"
+            api-key="[[_google_api_key]]"
+            additional-map-options='{"zoomControl":"true"}'
+            latitude="[[_placeDetailsInfo.latitude]]"
+            longitude="[[_placeDetailsInfo.longitude]]"
+            mapType="satellite"
+            zoom="18"
+            >
+            <google-map-marker
+              latitude="[[_placeDetailsInfo.latitude]]"
+              longitude="[[_placeDetailsInfo.longitude]]"
+              icon="{{_getPoiIcon()}}">
+
+            </google-map-marker>
+
+          </google-map>
+
+        </template>
+
+
+
     </template>
 
     <google-map-directions
@@ -189,8 +219,37 @@
           value:window.env.keys.google_map_api_key
         },
       },
+      _onPoiClick: function(e) {
+        if (this._selectedPoiMarker) {
+          this._selectedPoiMarker.open = false;
+        }
 
+        this._selectedPoiMarker = e.srcElement;
+        this._selectedPoiMarker.open = true;
+      },
+      _isValidCords: function(lat, lng) {
+        if (isNaN(parseFloat(lat))) {
+          return false;
+        }
+        if (isNaN(parseFloat(lng))) {
+          return false;
+        }
+        return true;
+      },
+      _getPoiIcon: function(url) {
+        if (!url) {
+          url = '/images/custom_poi.png';
+        }
+        return new google.maps.MarkerImage(
+          url, //url
+          null, //size
+          null, //origin
+          null, //anchor
+          new google.maps.Size(18, 18)
+        );
+      },
       _placeDetailsChange: function(newPlaceDetails) {
+        console.log(newPlaceDetails);
         if (newPlaceDetails) {
           var DEFAULT_POI_IMAGE = '/images/poi-detail-default.svg';
           var poiImage = newPlaceDetails.photos && newPlaceDetails.photos[0].getUrl({'maxHeight': 230, 'maxWidth': window.outerWidth});
@@ -204,7 +263,10 @@
             formatedPhoneNumber : newPlaceDetails['formatted_phone_number'],
             website: newPlaceDetails['website'],
             scheduleInfo: newPlaceDetails['opening_hours'],
-            openNow: newPlaceDetails['opening_hours'] && newPlaceDetails['opening_hours']['open_now']
+            openNow: newPlaceDetails['opening_hours'] && newPlaceDetails['opening_hours']['open_now'],
+            latitude:newPlaceDetails.latitude,
+            longitude:newPlaceDetails.longitude,
+
           };
 
           this.$.mapDirections.startAddress = this.$.mapsUtils.getLatLngObj(this.latOrigin, this.lngOrigin);

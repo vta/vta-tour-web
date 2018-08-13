@@ -82,6 +82,37 @@ app.get('/api/coords/:lat/:lon', (req, res) => {
   });
 });
 
+app.get('/api/google-pois/:lat/:lon/:type/:token?', (req, res) => {
+  const lat = req.params.lat;
+  const lon = req.params.lon;
+  const type = req.params.type;
+  const token = req.params.token;
+  const apiKey = req.get("x-api-key");
+
+
+var options = {
+  method: 'GET',
+  url: 'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
+  qs:
+   {
+     location: `${lat},${lon}`,
+     radius: 500,
+     key: apiKey,
+     type:type,
+   },
+ };
+
+ if(token){
+   options.qs.pagetoken = token;
+ }
+
+request(options, (error, response, body) => {
+  if (error) throw new Error(error);
+  console.log(JSON.parse(body));
+  return res.json(JSON.parse(body))
+});
+});
+
 app.post('/api/route-details/:route_code/:direction', (req, res) => {
   try{
     const apiKey = req.headers.apikey
