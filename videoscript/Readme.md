@@ -55,7 +55,7 @@
 
       Create conf file vta.conf with following content and load this conf for Apache. (path to create file: /etc/apache2/sites-enabled/)
 
-
+```
 	WSGIPythonHome /var/www/html/vta-tour-web/videoscript/venv/  
 	<VirtualHost *:80>  
 	ServerAdmin admin@vtatour.com  
@@ -79,7 +79,7 @@
 	    Options
 	 </Directory>
 	</VirtualHost>
-
+```
 ## Important topics ##
 
 ### Base Technology Stack ###
