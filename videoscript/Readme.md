@@ -77,7 +77,7 @@
 	    SetEnvIfNoCase Host ip-172-31-15-203.us-west-1.compute.internal VALID_HOST  
 	    Require env VALID_HOST  
 	    Options
-	</Directory>
+	 </Directory>
 	</VirtualHost>
 
 ## Important topics ##
@@ -88,4 +88,3 @@
 
 ### Git branch model ###
 The Git branch model that will be followed is the one proposed by GitFlow and documented [here](http://nvie.com/posts/a-successful-git-branching-model/).
-
