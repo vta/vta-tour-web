@@ -56,7 +56,7 @@
       Create conf file vta.conf with following content and load this conf for Apache. (path to create file: /etc/apache2/sites-enabled/)
 
 
-	WSGIPythonHome /home/crowdplat/vtatour/videoscript/venv/  
+	WSGIPythonHome /var/www/html/vta-tour-web/videoscript/venv/  
 	<VirtualHost *:80>  
 	ServerAdmin admin@vtatour.com  
 	KeepAlive On  
@@ -65,20 +65,20 @@
 	WSGIDaemonProcess vta python-path=/usr/local/lib/python2.7/dist-packages  
 	WSGIProcessGroup vta  
 	WSGIApplicationGroup %{GLOBAL}  
-	Alias /static/ /home/crowdplat/vta/static/  
+	Alias /static/ /var/www/html/vta-tour-web/videoscript/static/  
 	<Directory /home/crowdplat/vta/static>  
-	    Require all granted  
+	    Require all granted
 	</Directory>  
-	WSGIScriptAlias / /home/crowdplat/vta/vta/wsgi.py  
+	WSGIScriptAlias / /var/www/html/vta-tour-web/videoscript/vta/wsgi.py  
 	<Directory /home/crowdplat/vta/>  
 	    <Files wsgi.py>  
-	       Require all granted  
+	       Require all granted
 	    </Files>  
 	    SetEnvIfNoCase Host ip-172-31-15-203.us-west-1.compute.internal VALID_HOST  
 	    Require env VALID_HOST  
-	    Options  
-	</Directory>  
-	</VirtualHost>  
+	    Options
+	</Directory>
+	</VirtualHost>
 
 ## Important topics ##
 
