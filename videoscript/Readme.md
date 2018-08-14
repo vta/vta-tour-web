@@ -1,4 +1,4 @@
-# VTA Tour Video Generation Script#
+# VTA Tour Video Generation Script #
 
 ## What is this repository for? ##
 
@@ -56,29 +56,29 @@
       Create conf file vta.conf with following content and load this conf for Apache. (path to create file: /etc/apache2/sites-enabled/)
 
 
-	WSGIPythonHome /home/crowdplat/vtatour/videoscript/venv/
-	<VirtualHost *:80>
-	ServerAdmin admin@vtatour.com
-	KeepAlive On
-	TimeOut 180000
-	KeepAliveTimeout 90000
-	WSGIDaemonProcess vta python-path=/usr/local/lib/python2.7/dist-packages
-	WSGIProcessGroup vta
-	WSGIApplicationGroup %{GLOBAL}
-	Alias /static/ /home/crowdplat/vta/static/
-	<Directory /home/crowdplat/vta/static>
-	    Require all granted
-	</Directory>
-	WSGIScriptAlias / /home/crowdplat/vta/vta/wsgi.py
-	<Directory /home/crowdplat/vta/>
-	    <Files wsgi.py>
-	       Require all granted
-	    </Files>
-	    SetEnvIfNoCase Host ip-172-31-15-203.us-west-1.compute.internal VALID_HOST
-	    Require env VALID_HOST
-	    Options
-	</Directory>
-	</VirtualHost>
+	WSGIPythonHome /home/crowdplat/vtatour/videoscript/venv/  
+	<VirtualHost *:80>  
+	ServerAdmin admin@vtatour.com  
+	KeepAlive On  
+	TimeOut 180000  
+	KeepAliveTimeout 90000  
+	WSGIDaemonProcess vta python-path=/usr/local/lib/python2.7/dist-packages  
+	WSGIProcessGroup vta  
+	WSGIApplicationGroup %{GLOBAL}  
+	Alias /static/ /home/crowdplat/vta/static/  
+	<Directory /home/crowdplat/vta/static>  
+	    Require all granted  
+	</Directory>  
+	WSGIScriptAlias / /home/crowdplat/vta/vta/wsgi.py  
+	<Directory /home/crowdplat/vta/>  
+	    <Files wsgi.py>  
+	       Require all granted  
+	    </Files>  
+	    SetEnvIfNoCase Host ip-172-31-15-203.us-west-1.compute.internal VALID_HOST  
+	    Require env VALID_HOST  
+	    Options  
+	</Directory>  
+	</VirtualHost>  
 
 ## Important topics ##
 
