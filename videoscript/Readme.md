@@ -14,25 +14,47 @@
 ## How to setup? ##
 
 1.  Install Apache HTTP server
+
 2.  Install MySQL and Python 2.7
+
 3.  Create a Database “VTA”
+
 4.  Run the following SQL query in the database
+
       https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/database-init/vta-init-db.sql
+
 5.  Install packages
+
       Open the folder containing requirements.txt in terminal and run the following   command
+
       sudo pip install -r requirements.txt
+
 6.  Go to the "web" folder /var/www/html/
+
 7.  Clone the repository
+
 8.  Update credentials in settings file - Details are in the file.
+
       Open Settings.py (Location : vta/vta/settings.py)
+
       Enter the authentication credentials in vta credentials section in settings.py
+
 9.  Set project path
+
       Open Manage.py (Location: vta/manage.py)
+
       Enter the project path
+
 10. Google Streetview API
-      Replace “Google_Streetview” in python folder (/usr/local/lib/python2.7/) with the  one provided in mail (either dist-packages or site-packages).
+
+      Replace api.py in “Google_Streetview” in python folder (/usr/local/lib/python2.7/ either dist-packages/site-packages) with
+
+      https://github.com/vta/vta-tour-web/tree/master/videoscript/google_api/api.py
+
 11. Configure apache server.
+
       Create conf file vta.conf with following content and load this conf for Apache. (path to create file: /etc/apache2/sites-enabled/)
+
 
 	WSGIPythonHome /home/crowdplat/vtatour/videoscript/venv/
 	<VirtualHost *:80>
