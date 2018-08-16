@@ -1,0 +1,5 @@
+google_streetview==1.2.4
+Django==1.11.12
+requests==2.11.1
+numpy==1.14.2
+mysql_connector_repackaged==0.3.1
