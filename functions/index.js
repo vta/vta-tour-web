@@ -51,7 +51,7 @@ app.get('/api/meetups/:lat/:lon', (req, res) => {
     if (error)
       throw new Error(error);
 
-    console.log(body);
+    //console.log(body);
     return res.json(JSON.parse(body))
   });
 });
@@ -77,7 +77,7 @@ app.get('/api/coords/:lat/:lon', (req, res) => {
     if (error)
       throw new Error(error);
 
-    console.log(body);
+    //console.log(body);
     return res.json(JSON.parse(body))
   });
 });
@@ -108,7 +108,7 @@ var options = {
 
 request(options, (error, response, body) => {
   if (error) throw new Error(error);
-  console.log(JSON.parse(body));
+  //console.log(JSON.parse(body));
   return res.json(JSON.parse(body))
 });
 });

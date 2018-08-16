@@ -445,7 +445,18 @@
               <google-map-marker latitude="{{cordObject.properties.lat}}" longitude="{{cordObject.properties.lon}}"
                 click-events on-google-map-marker-click="_onPoiClick" icon="/images/bike.png">
                 <h2>{{cordObject.properties.name}}</h2>
-                <span>Bikes Available: {{cordObject.properties.num_bikes_available}}, Docks Available: {{cordObject.properties.num_docks_available}}</span>
+                <span>
+                 <template is="dom-if" if="[[cordObject.properties.location_type]]">
+                  Station Type: {{_getStationTypeForCoords(cordObject.properties.location_type)}}<br/>
+                 </template>
+                 <template is="dom-if" if="[[cordObject.properties.num_bikes_available]]">
+                  Bikes Available: {{cordObject.properties.num_bikes_available}}<br/>
+                 </template>
+                 <template is="dom-if" if="[[cordObject.properties.num_docks_available]]">
+                  Docks Available: {{cordObject.properties.num_docks_available}}</span>
+                 </template>
+
+
               </google-map-marker>
             </template>
         <template is="dom-repeat" items="{{_customPois}}" as="_customPoi">
@@ -1174,7 +1185,10 @@
           // If its on poi list or detail go back to navigation page.
           this._back();
           //_playVideo
-          this.player.play();
+          if(this.player){
+              this.player.play();
+          }
+
           this._shouldHidePlay = true;
           this._isVideoPlaying = true;
           this._startedOnce = true;
@@ -1198,7 +1212,10 @@
         },
 
         _pauseVideo: function() {
-          this.player.pause();
+          if(this.player){
+              this.player.pause();
+          }
+
           this._shouldHidePlay = false;
           this._isVideoPlaying = false;
           // this.$.routeVideo.pause();
@@ -1238,7 +1255,10 @@
         _stopVideo: function() {
           var self = this;
           this.setUpdatedPois([]);
-          this.player.pause();
+          if(this.player){
+            this.player.pause();
+          }
+
           this.$.pois._clearSelection();
           //alert();
           if (!this._currentLat && !this._currentLng) {
@@ -1268,7 +1288,10 @@
           var clickPercentage = progressBar.layerX * 100 / progressBar.srcElement.clientWidth;
           var progressSeconds = this._calculateVideoSeconds(this._videoStartTime, this._videoEndTime, clickPercentage);
           this._nextStop = this._calculateNextStop(this._stopsSlot, progressSeconds);
-          this.player.currentTime(progressSeconds);
+          if(this.player){
+            this.player.currentTime(progressSeconds);
+          }
+
         },
 
         /**
@@ -1392,7 +1415,9 @@
           var point = this.$.mapsUtils.getClosestPoint(latLng.lat(), latLng.lng(), this._routeDetails.videoGeoPoints);
           this._currentLat = point.latLng.lat;
           this._currentLng = point.latLng.lng;
-          this.player.currentTime(point.key);
+          if(this.player){
+            this.player.currentTime(point.key);
+          }
           this._nextStop = this._calculateNextStop(this._stopsSlot, point.key);
         },
 
@@ -1944,20 +1969,20 @@
           // this._pauseVideo();
           var self = this;
           var oldPlayerTime = this.currentVideoTime || 0;
+          this._pauseVideo();
           this._assignSource(src);
           console.log('Old View: '+this.old_view+' ,Current View '+this.current_view + ',Current Time: '+oldPlayerTime);
-          if(this.old_view=='leftView' && this.current_view=='rightView'){
-              this._videoCurrentTimeChange(oldPlayerTime);
-            // console.log('View Condition Success');
-            // //this._videoCurrentTimeChange(this.currentVideoTime-1);
-            // //this.player.currentTime(this.currentVideoTime-1);
-            // setTimeout(function(){
-            //   self.player.currentTime(self.currentVideoTime-1);
-            // },2000);
-          }else{
-            this._videoCurrentTimeChange(this._videoStartTime);
-          }
-          this._pauseVideo();
+          console.log('Current Time: '+oldPlayerTime);
+          setTimeout(function(){
+            if(self.player){
+              self.player.currentTime(oldPlayerTime);
+              self._pauseVideo();
+            }
+
+          },2500);
+          //this._playVideo();
+          //this._videoCurrentTimeChange(oldPlayerTime);
+          //this._pauseVideo();
         },
         _goBack: function() {
           $('#backBtn').click();
@@ -2223,6 +2248,17 @@
             }
           });
         },
+       _getStationTypeForCoords: function(locationType) {
+                if(locationType=='free_bike'){
+                  return 'Dockless';
+                }else if(locationType=='bike_station_dock'){
+                  return 'Dock';
+                }else if(locationType=='bike_station_hub'){
+                  return 'Dockless with hub';
+                }else{
+                  return locationType.replace('_',' ');
+                }
+        }
 
       });
     } catch (err) {

@@ -46,16 +46,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.hideBackBtn();
       app.hideViewsBtn();
       app.resetAppName();
+      app.hideAboutUsBtn();
       next();
     });
 
     page('/', function() {
+      app.showAboutUsBtn();
       var routeNavigation = document.querySelector('route-navigation');
       routeNavigation.clearRouteSelection();
       openRoutesScreen();
     });
     page('/training-quiz', function() {
       app.route = 'training-quiz';
+      setFocus(app.route);
+    });
+    page('/about-us', function() {
+      app.route = 'about-us';
       setFocus(app.route);
     });
 

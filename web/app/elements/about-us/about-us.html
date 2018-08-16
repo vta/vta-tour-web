@@ -1,0 +1,352 @@
+<dom-module id="about-us">
+    <template>
+      <style is="custom-style" include="shared-styles"></style>
+      <style>
+        paper-dropdown-menu {
+          width: 100%;
+        }
+
+        .route-selection-message {
+          color: var(--secondary-color);
+          margin-left: 26%;
+          margin-top: 1%;
+        }
+
+        paper-fab{
+          float: left;
+          position: relative;
+          margin-left: 44%;
+          margin-top: 10px;
+          width:135px;
+          background-color: #02528a;
+          border-radius: 29px;
+          touch-action: manipulation;
+          -ms-touch-action: manipulation;
+          cursor: pointer;
+          font-weight: 600;
+          text-align: center;
+          height: 45px;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          background-image: none;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(2, 82, 138, 0.19);
+        }
+        .panel-body {
+          padding: 10px!important;
+          border-radius: 10px!important;
+          background-color: #FFF!important;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(2, 82, 138, 0.19);
+          margin-top: 16px;
+          width: 86%;
+          margin-left: 14%!important;
+        }
+        paper-input-autocomplete,paper-dropdown-menu{
+          border: 1px solid #02528a!important;
+          box-shadow: none;
+          /* color: #c2c2c2; */
+          padding: 1px 32px;
+          font-size: 11px;
+          border-radius: 60px!important;
+        }
+        paper-material{
+          width:88%;
+        }
+        /* paper-dropdown-menu{
+          padding: 5px!important;
+          border-radius: 21px!important;
+          background-color: #FFF!important;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(2, 82, 138, 0.19) !important;
+          margin-top: 16px;
+          border: 1px solid #02528a!important;
+          height: 60px;
+        } */
+        @media all and (min-width: 768px) and (max-width: 980px) {
+          .panel-body {
+            width: 85%;
+            margin-left: 10%;
+          }
+          .route-selection-message {
+            margin-left: 20%;
+          }
+        }
+        @media all and (max-width: 768px) {
+          .panel-body {
+            width: 85%;
+            margin-left: 10%;
+          }
+          .top-header{
+            height: 39px!important;
+          }
+
+          paper-fab{
+            margin-left: 40%;
+            margin-top: 30px;
+          }
+          .route-selection-message {
+            margin-left: 15%;
+          }
+          .quiz-area {
+            padding-left: 5%!important;
+            padding-right: 5%!important;
+        }
+
+
+        }
+
+        @media (max-width: 480px) {
+          .panel-body {
+            width: 100%;
+            margin-left: 0%;
+          }
+          .top-header{
+            height: 39px!important;
+          }
+            paper-fab{
+              margin-left: 38%;
+              margin-top: 30px;
+            }
+            .route-selection-message {
+              margin-left: 10%;
+            }
+
+        }
+        @media (max-width:320px) {
+
+              .panel-body {
+                width: 100%;
+                margin-left: 0%;
+              }
+
+        }
+        .header-frontend .navbar{
+              min-height: 52px !important;
+        }
+        .dataTables_info {
+            color: #fff!important;
+            margin-top: 38px!important;
+        }
+
+
+        .f-box i {
+            font-size: 25px;
+            line-height: normal;
+            margin-top: 27px;
+            display: block;
+            color: #fff;
+        }
+
+        .dataTables_info {
+            color: #fff!important;
+            margin-top: 8px;
+        }
+
+        .f-box {
+
+            height: 104px!important;
+
+        }
+        @media (max-width: 768px){
+
+        	.top-header .header-item {
+
+             margin-left:0px!important;
+        ;
+            /* padding-top: 4px; */
+        }
+        .top-header {
+
+            height:36px!important;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+      }
+
+      .about-us h3{ font-size:21px !important; color:#02528a!important; font-weight: 345}
+      .about-us{ padding-bottom:1px;}
+      .background-color,.background-color .about-us{
+        padding-bottom:0px;
+      }
+      .quiz-area{ padding-left:1%!important; padding-right:10%!important; }
+      .quiz2{ line-height:33px!important;}
+      .inner-content{
+        padding-bottom: 1px !important;
+        margin: 2px 0px !important;
+      }
+      .about-us.about-us h3.about-us{
+            padding-top: 20px;
+      }
+      .f-box{
+        cursor: pointer;
+      }
+      #saveOperationResultModal {
+        width: auto;
+        background-color: transparent;
+        color: var(--vta-white);
+        box-shadow: none;
+      }
+
+      #saveOperationResultModal .icon {
+        text-align: center;
+      }
+
+      #saveOperationResultModal iron-icon {
+        width: 140px;
+        height: 140px;
+        padding: 20px;
+        text-align: center;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+      }
+
+      #saveOperationResultModal .message-wrapper.success iron-icon {
+        background-color: var(--primary-color);
+      }
+
+      #saveOperationResultModal .message-wrapper.error iron-icon {
+        background-color: var(--secondary-color);
+      }
+
+      #saveOperationResultModal .message {
+        text-align: center;
+        font-size: 2.5em;
+        line-height: 1;
+        text-transform: none;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      .special-messge{
+        padding: 2px!important;
+        border-radius: 10px!important;
+        background-color: #FFF!important;
+        /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(2, 82, 138, 0.19); */
+        margin-top: 25px;
+        width: 95%;
+        margin-left: 3%!important;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .banner{
+        height: auto;
+        position: relative;
+        overflow: auto;
+        margin-bottom: 0.5%;
+      }
+      /*  Extra Media queries */
+
+      @media all and (min-width: 768px) and (max-width: 980px) {
+
+      }
+      @media all and (max-width: 768px) {
+
+        }
+      @media (max-width: 480px) {
+            .panel-body{
+              margin-left: 5%!important;
+            }
+            .about-us h3{
+              font-size: 15px !important;
+            }
+            .quiz2{
+                  line-height: 20px!important;
+            }
+
+            .f-box{
+              padding:0px!important;
+              padding-top:5%!important;
+              height: 60px!important;
+              margin-top: 10px !important;
+            }
+            .f-box i {
+                margin-top: 10px !important;
+            }
+            .f-box h2{
+              font-size: 10px!important;
+            }
+            .dataTables_info{
+                  margin-top: 15px!important;
+            }
+        }
+        .background-color{
+          /* margin-top: 7%; */
+          position: fixed;
+          bottom: 0;
+        }
+        google-map {
+          height: 300px;
+        }
+        /* (1600x900) HD+ Display */
+        @media  screen and (max-width: 2560px) and (min-width: 1600px){
+            /* insert styles here */
+            .container{
+              min-width:1600px;
+              width:100%;
+            }
+            .panel-body{
+              height:650px;
+            }
+            .quiz_content{
+              /* margin-top: 10%; */
+            }
+            .about-us h3{
+              font-size: 30px !important;
+            }
+            .quiz2{
+                  line-height: 60px!important;
+                  font-size: 18px;
+            }
+            google-map,.map_wrapper{
+              height: 600px !important;
+            }
+            .dataTables_info{
+              font-size: 18px;
+            }
+        }
+      </style>
+
+      <div class="top-header">
+              <div class="container-fluid header-area">
+                  <div class="pull-left">
+
+                      <div style="height:30px;" class="header-item">About</div>
+
+                  </div>
+                  <div class="pull-right  ">
+
+
+                  </div>
+                  <!-- #top-social end -->
+
+              </div>
+
+      </div>
+
+  <div class="inner-content">
+
+          <div class="special-messge">
+            <div>
+              The application allows our users to check out: transit connections/stop amenities, sceneries, Google POIs, bike share information, Meetup gatherings, our customized POIs along our transit route beforehand.  We also developed a quiz for anyone with interests to get familiar with our transit system.  The link is <a href="/training-quiz" target="_blank" style="color: #0B5388;">here</a> .<br/>
+
+              The video for the application is generated based on the best resolution Google Street View images allowed by Google license. Videos have been generated for all transit lines except LRT lines operated by Santa Clara Valley Transportation Authority. Videos doesn't represent real driving experience. For example, some times, due to lack of Google images on both sides of the street, the video seems to be capturing views from the wrong side of the streets. Though we can still make the videos better, we decided to pause for the time being and let the users review the applications and get feedback first.
+</div>
+          </div>
+
+  </div>
+
+  </template>
+
+</dom-module>
+
+<script>
+	(function() {
+    'use strict';
+    Polymer({
+      is: 'about-us',
+      properties: {
+
+      },
+    });
+  })();
+</script>

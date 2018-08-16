@@ -26,6 +26,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   var poisBtn;
   var backBtn;
   var viewsBtn;
+  var aboutUsBtn;
 
   // Sets app default base URL
   app.baseUrl = '/';
@@ -50,6 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     poisBtn = Polymer.dom(document).querySelector('#poisBtn');
     backBtn = Polymer.dom(document).querySelector('#backBtn');
     viewsBtn = Polymer.dom(document).querySelector('#viewsBtn');
+    aboutUsBtn = Polymer.dom(document).querySelector('#aboutUsBtn');
 
     backBtn.addEventListener('click', app.back);
   });
@@ -133,6 +135,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       viewsBtn.style.display = 'none';
     }
   };
+
+  app.showAboutUsBtn = function() {
+    if (aboutUsBtn) {
+      aboutUsBtn.style.display = 'block';
+    }
+  };
+
+  app.hideAboutUsBtn = function() {
+    if (aboutUsBtn) {
+      aboutUsBtn.style.display = 'none';
+    }
+  };
+
+
+
 
 
 
