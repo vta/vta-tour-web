@@ -458,7 +458,20 @@
 
 
               </google-map-marker>
-            </template>
+        </template>
+        <template is="dom-repeat" items="{{_limes}}" as="limeObject">
+              <google-map-marker latitude="{{limeObject.lat}}" longitude="{{limeObject.lng}}"
+                click-events on-google-map-marker-click="_onPoiClick" icon="/images/bike.png">
+                <h2>{{limeObject.id}}</h2>
+                 <template is="dom-if" if="[[limeObject.type_name]]">
+                  <br/>
+                  Type: [[limeObject.type_name]]<br/>
+                 </template>
+                 <template is="dom-if" if="[[limeObject.battery_level]]">
+                  Battery Level: {{limeObject.battery_level}}<br/>
+                 </template>
+              </google-map-marker>
+        </template>
         <template is="dom-repeat" items="{{_customPois}}" as="_customPoi">
                 <template is="dom-if" if="[[_isValidCords(_customPoi.latitude,_customPoi.longitude)]]">
                     <google-map-marker latitude="{{_customPoi.latitude}}" longitude="{{_customPoi.longitude}}"
@@ -665,6 +678,9 @@
           _coords: {
             type: Array
           },
+          _limes: {
+            type: Array
+          },
           _customPois: {
             type: Array
           },
@@ -769,6 +785,7 @@
           this._customPois = [];
           this._meetUps = [];
           this._coords = [];
+          this._limes = [];
           this._direction = false;
           this.reFocused = false;
           this._isValidZoom = false;
@@ -1173,6 +1190,9 @@
           if (this._coords) {
             this._coords = null;
           }
+          if (this._limes) {
+            this._limes = null;
+          }
 
           $('#direction-display').html('');
 
@@ -1205,6 +1225,9 @@
           if (this._coords) {
             this._coords = null;
           }
+          if (this._limes) {
+            this._limes = null;
+          }
 
 
           // Send the event to Google Analytics
@@ -1227,6 +1250,7 @@
             console.log('going to call meetp up apis')
             this._getNearByMeetUps(this._currentLat, this._currentLng);
             this._getNearByCoords(this._currentLat, this._currentLng);
+            this._getNearByLimes(this._currentLat, this._currentLng);
 
 
           }
@@ -1247,6 +1271,7 @@
             this._customPois = this._customPoisOrigin;
             this._getNearByMeetUps(this._currentLat, this._currentLng);
             this._getNearByCoords(this._currentLat, this._currentLng);
+            this._getNearByLimes(this._currentLat, this._currentLng);
           }
 
           // Send the event to Google Analytics
@@ -1276,6 +1301,7 @@
             this._customPois = this._customPoisOrigin;
             this._getNearByMeetUps(this._currentLat, this._currentLng);
             this._getNearByCoords(this._currentLat, this._currentLng);
+            this._getNearByLimes(this._currentLat, this._currentLng);
           }
 
           // Send the event to Google Analytics
@@ -2238,13 +2264,35 @@
             }
           }
           $.ajax(settings).done(function(response) {
-            console.log('check meetups data below');
-            console.log(response);
+            // console.log('check meetups data below');
+            // console.log(response);
             if (response.features) {
               self._coords = response.features;
 
               console.log('check actual coords Data');
               console.log(self._coords);
+            }
+          });
+        },
+        _getNearByLimes: function(lat, lon) {
+          var self = this;
+          var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": "/api/limebike/" + lat + "/" + lon + "",
+            "method": "GET",
+            "headers": {
+              "cache-control": "no-cache",
+            }
+          }
+          $.ajax(settings).done(function(response) {
+            // console.log('check meetups data below');
+            // console.log(response);
+            if (response) {
+              self._limes = response;
+
+              console.log('check actual limes Data');
+              console.log(self._limes);
             }
           });
         },

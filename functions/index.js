@@ -29,6 +29,9 @@ getConfig().then((mainConfigs) => {
 app.get('/api/meetups/:lat/:lon', (req, res) => {
   const lat = req.params.lat;
   const lon = req.params.lon;
+  if(!lat || !lon){
+    return res.status(400);
+  }
 
   var options = {
     method: 'GET',
@@ -58,6 +61,9 @@ app.get('/api/meetups/:lat/:lon', (req, res) => {
 app.get('/api/coords/:lat/:lon', (req, res) => {
   const lat = req.params.lat;
   const lon = req.params.lon;
+  if(!lat || !lon){
+    return res.status(400);
+  }
 
   var options = {
     method: 'GET',
@@ -80,6 +86,43 @@ app.get('/api/coords/:lat/:lon', (req, res) => {
     //console.log(body);
     return res.json(JSON.parse(body))
   });
+});
+
+app.get('/api/limebike/:lat/:lon', (req, res) => {
+  const lat = req.params.lat;
+  const lon = req.params.lon;
+
+  if(!lat || !lon){
+    return res.status(400);
+  }
+
+  var options = { method: 'POST',
+  url: 'https://api.multicycles.org/v1',
+  qs: { access_token: config.MultiCycleApiKey },
+  headers:
+   { 'postman-token': 'cccb9fa3-0089-ee79-2573-edbfd6f17a95',
+     'cache-control': 'no-cache',
+     'content-type': 'application/json' },
+  body:
+   { query: 'query ($lat: Float!, $lng: Float!) {\n  vehicles(lat: $lat, lng: $lng ) {\n\t\tid\ttype \ttype \tattributes \tprovider{name} \t... on Lime {\tplate_number \tstatus \ttype_name \tbattery_level \tmeter_range} \tlat\tlng\n  }\n}',
+     variables: { lat: lat, lng: lon } },
+  json: true };
+
+    request(options, (error, response, body) => {
+      if (error) throw new Error(error);
+      const parsedData = body;
+      console.log(parsedData);
+      const processedData = [];
+      for(var i=0;i<parsedData.data.vehicles.length;i+=1){
+        const vehicle = parsedData.data.vehicles[i];
+        console.log(vehicle);
+        // if(vehicle.provider.name=='Lime'){
+        //   processedData.push(vehicle)
+        // }
+        processedData.push(vehicle)
+      }
+      return res.json(processedData)
+    });
 });
 
 app.get('/api/google-pois/:lat/:lon/:type/:token?', (req, res) => {
