@@ -461,15 +461,24 @@
         </template>
         <template is="dom-repeat" items="{{_limes}}" as="limeObject">
               <google-map-marker latitude="{{limeObject.lat}}" longitude="{{limeObject.lng}}"
-                click-events on-google-map-marker-click="_onPoiClick" icon="/images/bike.png">
-                <h2>{{limeObject.id}}</h2>
+                click-events on-google-map-marker-click="_onPoiClick" icon="{{_getCustomPoiIcon('/images/limebike.png',16,16)}}">
+                <h2><a href="[[limeObject.provider.website]]" target="_blank">{{limeObject.provider.name}}Bike</a></h2>
+                 <br/>
+                 ID: [[limeObject.id]]<br/>
                  <template is="dom-if" if="[[limeObject.type_name]]">
-                  <br/>
                   Type: [[limeObject.type_name]]<br/>
                  </template>
                  <template is="dom-if" if="[[limeObject.battery_level]]">
                   Battery Level: {{limeObject.battery_level}}<br/>
                  </template>
+                 <!-- <template is="dom-if" if="[[limeObject.provider.app]]">
+                    <template is="dom-if" if="[[limeObject.provider.app.android]]">
+                      Android App: <a href="[[limeObject.provider.app.android]]" target="_blank">Click here to get Android app in Google Play Store </a> <br/>
+                    </template>
+                    <template is="dom-if" if="[[limeObject.provider.app.ios]]">
+                      IOS App: <a href="[[limeObject.provider.app.android]]" target="_blank">Click here to get IOS app in Apple App Store </a> <br/>
+                    </template>
+                 </template> -->
               </google-map-marker>
         </template>
         <template is="dom-repeat" items="{{_customPois}}" as="_customPoi">
@@ -2159,7 +2168,13 @@
             new google.maps.Size(18, 18)
           );
         },
-        _getCustomPoiIcon: function(url) {
+        _getCustomPoiIcon: function(url,height,width) {
+          if(!height){
+            height = 18;
+          }
+          if(!width){
+            width = 18;
+          }
           if (!url) {
             url = '/images/custom_poi.png';
             //return url;
@@ -2169,7 +2184,7 @@
             null, //size
             null, //origin
             null, //anchor
-            new google.maps.Size(18, 18)
+            new google.maps.Size(height, width)
           );
         },
         _getCustomPoiLink: function(url) {

@@ -104,7 +104,7 @@ app.get('/api/limebike/:lat/:lon', (req, res) => {
      'cache-control': 'no-cache',
      'content-type': 'application/json' },
   body:
-   { query: 'query ($lat: Float!, $lng: Float!) {\n  vehicles(lat: $lat, lng: $lng ) {\n\t\tid\ttype \ttype \tattributes \tprovider{name} \t... on Lime {\tplate_number \tstatus \ttype_name \tbattery_level \tmeter_range} \tlat\tlng\n  }\n}',
+   { query: 'query ($lat: Float!, $lng: Float!) {\n  vehicles(lat: $lat, lng: $lng ) {\n\t\tid\ttype \ttype \tattributes \tprovider{\tname \twebsite \twebsite \tdiscountCode \tapp{\tandroid \tios}} \t... on Lime {\tplate_number \tstatus \ttype_name \tbattery_level \tmeter_range} \tlat\tlng\n  }\n}',
      variables: { lat: lat, lng: lon } },
   json: true };
 
@@ -113,13 +113,15 @@ app.get('/api/limebike/:lat/:lon', (req, res) => {
       const parsedData = body;
       console.log(parsedData);
       const processedData = [];
-      for(var i=0;i<parsedData.data.vehicles.length;i+=1){
-        const vehicle = parsedData.data.vehicles[i];
-        console.log(vehicle);
-        // if(vehicle.provider.name=='Lime'){
-        //   processedData.push(vehicle)
-        // }
-        processedData.push(vehicle)
+      if(parsedData.data && parsedData.data.vehicles && parsedData.data.vehicles.length){
+        for(var i=0;i<parsedData.data.vehicles.length;i+=1){
+          const vehicle = parsedData.data.vehicles[i];
+          console.log(vehicle);
+          // if(vehicle.provider.name=='Lime'){
+          //   processedData.push(vehicle)
+          // }
+          processedData.push(vehicle)
+        }
       }
       return res.json(processedData)
     });
