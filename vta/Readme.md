@@ -58,7 +58,7 @@
 
     Set permission to project folder
 
-		$ sudo chmod 755 -R vta/
+		$ sudo chmod 775 -R vta/
 
 7.  Install following packages
 
