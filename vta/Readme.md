@@ -34,11 +34,9 @@
  
      #### Python: ####
         
-	1. Refreshing the repositories
+	
 		$  sudo apt update
-	2. Its wise to keep the system up to date!
 		$  sudo apt upgrade
-	3. Installing python 2.7 and pip for it
 		$ sudo apt install python2.7 python-pip
 
 
@@ -57,7 +55,9 @@
 6.  Clone the repository (do not skip .at end in clone command)
 		
 		$ git clone https://github.com/vta/vta-tour-web.git .
-    #set permission to project folder
+
+    Set permission to project folder
+
 		$ sudo chmod 755 -R vta/
 
 7.  Install following packages
