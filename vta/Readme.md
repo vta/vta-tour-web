@@ -37,7 +37,7 @@
 	
 		$  sudo apt update
 		$  sudo apt upgrade
-		$ sudo apt install python2.7 python-pip
+		$  sudo apt install python2.7 python-pip
 
 
 3.  Run the following SQL query in the database
@@ -69,6 +69,13 @@
 		$ sudo -H pip install mysql-python
 		$ sudo pip install requests==1.1.0
 		$ sudo pip install python-firebase
+   
+    Create Virtual env for Django:
+
+		$ sudo pip  install virtualenv
+		$ virtualenv venv
+		$ source venv/bin/activate
+
 
 
 8.  Update credentials in settings file - Details are in the file.
