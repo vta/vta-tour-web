@@ -15,30 +15,31 @@
 
 1.  Install Apache HTTP server
 
-     $ sudo apt-get install apache2 -y
+		$ sudo apt-get install apache2 -y
 
 2.  Install MySQL and Python 2.7
     
      #### MySQL: ####
-	$ sudo apt-get update
-	$ sudo apt-get install mysql-server
-	$ mysql_secure_installation
+		$ sudo apt-get update
+		$ sudo apt-get install mysql-server
+		$ mysql_secure_installation
 
     Create new mysql user:
 
-	1. Enter mysql -u root -p in console and enter password
-    	2. CREATE USER 'dbuser'@'localhost' IDENTIFIED BY 'password';
-    	3. GRANT ALL PRIVILEGES ON * . * TO 'dbuser'@'localhost';
-	4. FLUSH PRIVILEGES;
+		1. Enter mysql -u root -p in console and enter password
+		2. CREATE USER 'dbuser'@'localhost' IDENTIFIED BY 'password';
+		3. GRANT ALL PRIVILEGES ON * . * TO 'dbuser'@'localhost';
+		4. FLUSH PRIVILEGES;
 
  
      #### Python: ####
-        1. Refreshing the repositories
-	$  sudo apt update
+        
+	1. Refreshing the repositories
+		$  sudo apt update
 	2. Its wise to keep the system up to date!
-	$  sudo apt upgrade
+		$  sudo apt upgrade
 	3. Installing python 2.7 and pip for it
-	   $ sudo apt install python2.7 python-pip
+		$ sudo apt install python2.7 python-pip
 
 
 3.  Run the following SQL query in the database
@@ -49,25 +50,25 @@
 
       Open the folder containing requirements.txt in terminal and run the following   command
 
-      $ sudo pip install -r requirements.txt
+		$ sudo pip install -r requirements.txt
 
 5.  Go to the "web" folder /var/www/html/
 
 6.  Clone the repository (do not skip .at end in clone command)
-    $ git clone https://github.com/vta/vta-tour-web.git .
+		
+		$ git clone https://github.com/vta/vta-tour-web.git .
     #set permission to project folder
-    $ sudo chmod 755 -R vta/
+		$ sudo chmod 755 -R vta/
 
 7.  Install following packages
 
-    	$ sudo apt-get install libapache2-mod-wsgi
-    	$ sudo a2enmod wsgi
-    	$ sudo service apache2 restart
-
-	$ sudo apt-get install libmysqlclient-dev
-	$ sudo -H pip install mysql-python
-	$ sudo pip install requests==1.1.0
-	$ sudo pip install python-firebase
+		$ sudo apt-get install libapache2-mod-wsgi
+		$ sudo a2enmod wsgi
+		$ sudo service apache2 restart
+		$ sudo apt-get install libmysqlclient-dev
+		$ sudo -H pip install mysql-python
+		$ sudo pip install requests==1.1.0
+		$ sudo pip install python-firebase
 
 
 8.  Update credentials in settings file - Details are in the file.
