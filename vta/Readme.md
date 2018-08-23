@@ -69,6 +69,8 @@
 		$ sudo -H pip install mysql-python
 		$ sudo pip install requests==1.1.0
 		$ sudo pip install python-firebase
+		$ sudo apt install awscli
+		$ aws configure
    
     Create Virtual env for Django:
 
@@ -76,23 +78,27 @@
 		$ virtualenv venv
 		$ source venv/bin/activate
 
+8.  Configure AWS key in cli
 
+9.  Set project path in views.py at /var/www/html/vta/vtatour
+    
+	base_dir = '/var/www/html/vta' #Base directory - line no 92
 
-8.  Update credentials in settings file - Details are in the file.
+10.  Update credentials in settings file - Details are in the file.
 
       Open Settings.py (Location : vta/vta/settings.py)
 
       Enter the authentication credentials in vta credentials section in settings.py
 
-9.  Set project path in manage.py at /var/www/html/vta/
+11.  Set project path in manage.py at /var/www/html/vta/
 
        Enter the project path as "/var/www/html/vta"
 
-10. Set project path wsgi.py at /var/www/html/vta/vta/
+12. Set project path wsgi.py at /var/www/html/vta/vta/
 
     sys.path.append("/var/www/html/vta")
 
-11. Google Streetview API
+13. Google Streetview API
 
       Replace api.py in “Google_Streetview” in python folder (/usr/local/lib/python2.7/ in dist-package) with
 
@@ -100,7 +106,7 @@
 
       /var/www/html/vta/google_api$ sudo cp api.py /usr/local/lib/python2.7/dist-packages/google_streetview/
 
-12. Configure apache server.
+14. Configure apache server.
 
       Create conf file vta.conf with following content and load this conf for Apache. (path to create file: /etc/apache2/sites-available/)
 
