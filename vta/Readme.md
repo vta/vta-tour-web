@@ -19,28 +19,26 @@
 
 2.  Install MySQL and Python 2.7
     
-     MySQL:
+     #### MySQL: ####
 	$ sudo apt-get update
 	$ sudo apt-get install mysql-server
 	$ mysql_secure_installation
 
     Create new mysql user:
 
-	Step1  : Enter mysql -u root -p in console and enter password
-    	Step2  : CREATE USER 'videouser'@'localhost' IDENTIFIED BY 'd%u8boblAt';
-    	Step 3 : GRANT ALL PRIVILEGES ON * . * TO 'videouser'@'localhost';
-	Step 4 : FLUSH PRIVILEGES;
+	1. Enter mysql -u root -p in console and enter password
+    	2. CREATE USER 'dbuser'@'localhost' IDENTIFIED BY 'password';
+    	3. GRANT ALL PRIVILEGES ON * . * TO 'dbuser'@'localhost';
+	4. FLUSH PRIVILEGES;
 
  
-     Python:
-        # refreshing the repositories
-	$ sudo apt update
-	# its wise to keep the system up to date!
-	# you can skip the following line if you not
-	# want to update all your software
-	$ sudo apt upgrade
-	# installing python 2.7 and pip for it
-	$ sudo apt install python2.7 python-pip
+     #### Python: ####
+        1. Refreshing the repositories
+	$  sudo apt update
+	2. Its wise to keep the system up to date!
+	$  sudo apt upgrade
+	3. Installing python 2.7 and pip for it
+	   $ sudo apt install python2.7 python-pip
 
 
 3.  Run the following SQL query in the database
