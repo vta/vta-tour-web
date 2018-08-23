@@ -71,6 +71,8 @@
 		$ sudo pip install python-firebase
 		$ sudo apt install awscli
 		$ aws configure
+		$ sudo apt install ffmpeg
+		$ sudo apt-get install imagemagick imagemagick-doc
    
     Create Virtual env for Django:
 
@@ -100,11 +102,13 @@
 
 13. Google Streetview API
 
-      Replace api.py in “Google_Streetview” in python folder (/usr/local/lib/python2.7/ in dist-package) with
+      Replace api.py in “Google_Streetview” in python folder (/usr/local/lib/python2.7/dist-package) with following file
 
       https://github.com/vta/vta-tour-web/tree/master/videoscript/google_api/api.py
 
       /var/www/html/vta/google_api$ sudo cp api.py /usr/local/lib/python2.7/dist-packages/google_streetview/
+
+      Change the variable secret = "" with google api key	
 
 14. Configure apache server.
 
