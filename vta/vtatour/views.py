@@ -89,7 +89,7 @@ class Google(object):
                 
                 #Prints route id and direction in terminal
                  
-                base_dir = '/home/crowdplat/vta' #Base directory
+                base_dir = '/var/www/html/vta' #Base directory
                 
                 pdir='/' # Project directory
                 sdata=list();
