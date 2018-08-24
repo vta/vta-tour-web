@@ -30,6 +30,7 @@
 		2. CREATE USER 'dbuser'@'localhost' IDENTIFIED BY 'password';
 		3. GRANT ALL PRIVILEGES ON * . * TO 'dbuser'@'localhost';
 		4. FLUSH PRIVILEGES;
+		5. SET SQL_SAFE_UPDATES = 0;
 
  
      #### Python: ####
