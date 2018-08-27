@@ -10,6 +10,10 @@
 * Apache/2.4.18
 * Mysql 5.7.23
 * Django 2.1
+* ffmpeg 2.8.15-0
+* MediaInfoLib - v0.7.82
+* ImageMagick 6.8.9-9
+* awscli
 
 ## How to setup? ##
 
@@ -31,6 +35,7 @@
 		3. GRANT ALL PRIVILEGES ON * . * TO 'dbuser'@'localhost';
 		4. FLUSH PRIVILEGES;
 		5. SET SQL_SAFE_UPDATES = 0;
+		6. CREATE database vta;
 
  
      #### Python: ####
@@ -43,7 +48,7 @@
 
 3.  Run the following SQL query in the database
 
-      https://s3-us-west-1.amazonaws.com/vta-tour-rtmp/database-init/vta-init-db.sql
+		$ mysql -u root -p vta < /var/www/html/vta/vta-init-db_test.sql
 
 4.  Install packages
 
@@ -67,25 +72,25 @@
 		$ sudo a2enmod wsgi
 		$ sudo service apache2 restart
 		$ sudo apt-get install libmysqlclient-dev
-		$ sudo -H pip install mysql-python
-		$ sudo pip install requests==1.1.0
-		$ sudo pip install python-firebase
-		$ sudo apt install awscli
-		$ aws configure
 		$ sudo apt install ffmpeg
 		$ sudo apt-get install imagemagick imagemagick-doc
-   
-    Create Virtual env for Django:
+		$ sudo apt-get install python-mysqldb
+		$ sudo apt-get install mediainfo 
 
-		$ sudo pip  install virtualenv
+     Create Virtual env for Django:
+
+		$ sudo -H pip install virtualenv
 		$ virtualenv venv
 		$ source venv/bin/activate
 
 8.  Configure AWS key in cli
 
+		$ sudo apt install awscli
+		$ aws configure
+
 9.  Set project path in views.py at /var/www/html/vta/vtatour
     
-	base_dir = '/var/www/html/vta' #Base directory - line no 92
+	base_dir = '/var/www/html/vta' #Base directory
 
 10.  Update credentials in settings file - Details are in the file.
 
@@ -107,9 +112,9 @@
 
       https://github.com/vta/vta-tour-web/tree/master/videoscript/google_api/api.py
 
-      /var/www/html/vta/google_api$ sudo cp api.py /usr/local/lib/python2.7/dist-packages/google_streetview/
+ 		/var/www/html/vta/google_api$ sudo cp api.py /usr/local/lib/python2.7/dist-packages/google_streetview/
 
-      Change the variable secret = "" with google api key	
+      Change the variable secret = "" with google sign in screet key
 
 14. Configure apache server.
 
