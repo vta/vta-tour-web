@@ -407,7 +407,7 @@ class Google(object):
                     mysql_post(sql12)
 
                     #Creates forward video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/forward/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/forward/'+'%d_cropped.jpg -c:v libx264  -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4')
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
                     sql13 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading forward video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
@@ -422,7 +422,7 @@ class Google(object):
                     sql14 = 'UPDATE routes_progress SET progress="99% Completed ( Generating backward video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
                     mysql_post(sql14)
                     #Creates backward video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/backward/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/backward/'+'%d_cropped.jpg -c:v libx264 -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4')
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
                     sql15 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading backward video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
@@ -437,7 +437,7 @@ class Google(object):
                     sql16 = 'UPDATE routes_progress SET progress="99% Completed ( Generating left video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
                     mysql_post(sql16)
                     #Create Left video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/left/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/left/'+'%d_cropped.jpg -c:v libx264 -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4')
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
                     sql17 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading left video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
@@ -452,7 +452,7 @@ class Google(object):
                     sql18 = 'UPDATE routes_progress SET progress="99% Completed ( Generating right video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
                     mysql_post(sql18)
                     #Create right video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/right/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/right/'+'%d_cropped.jpg -c:v libx264  -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4')
                     #Upload right video to s3
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")

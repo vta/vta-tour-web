@@ -3,10 +3,10 @@ Django==1.11.12
 requests==2.11.1
 numpy==1.14.2
 mysql_connector_repackaged==0.3.1
-pip installmysql-python
-pip installrequests==1.1.0
-pip installpython-firebase
-pip installMySQL-python
-pip installmysql-connector-python==8.0.11
-pip installpymysql
-pip installmysqlclient==1.3.12
+mysql-python
+requests==1.1.0
+python-firebase
+MySQL-python
+mysql-connector-python==8.0.11
+pymysql
+mysqlclient==1.3.12

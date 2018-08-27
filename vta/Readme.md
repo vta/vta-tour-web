@@ -72,10 +72,15 @@
 		$ sudo a2enmod wsgi
 		$ sudo service apache2 restart
 		$ sudo apt-get install libmysqlclient-dev
-		$ sudo apt install ffmpeg
+		$ sudo add-apt-repository ppa:mc3man/trusty-media
+		$ sudo apt-get update
+		$ sudo apt-get install ffmpeg
+		$ sudo apt-get install frei0r-plugins
+		$ sudo apt-get install libav-tools
 		$ sudo apt-get install imagemagick imagemagick-doc
 		$ sudo apt-get install python-mysqldb
 		$ sudo apt-get install mediainfo 
+		$ sudo apt-get install x264 -y
 
      Create Virtual env for Django:
 
