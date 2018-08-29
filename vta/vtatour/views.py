@@ -7,6 +7,8 @@ import hmac
 import base64
 import urllib2
 import hashlib
+import pymysql.cursors
+#import pymysql
 import urlparse
 import datetime
 import commands
@@ -24,23 +26,62 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from math import cos, sin, atan2, sqrt, radians, degrees, asin, modf
 
-global mydb,fps,firebase,my_host,my_user,my_password,my_db,google_key,api_key
+global fps,firebase,google_key,api_key
 
-my_host = getattr(settings, "DB_HOST", None)
-my_user = getattr(settings, "DB_USER", None)
-my_password = getattr(settings, "DB_PASSWORD", None)
-my_db = getattr(settings, "DB_DB", None)
 
 fps='2' # Set video frame rate (frames per second)
 
 api_url =  getattr(settings, "API_URL", None)
 google_key = getattr(settings, "G_KEY", None)
 
+def createdir(path):
+    try:
+        os.makedirs(path)
+    except:
+        pass
 
+def mysql_post(query):
+    try:
+        my_host = getattr(settings, "DB_HOST", None)
+        my_user = getattr(settings, "DB_USER", None)
+        my_password = getattr(settings, "DB_PASSWORD", None)
+        my_db = getattr(settings, "DB_DB", None)
+	mydb = pymysql.connect(user=my_user,passwd=my_password,host=my_host,database=my_db)
+        mycursor = mydb.cursor()
+        mycursor.execute(query)
+        mydb.commit()
+        mycursor.close()
+        mydb.close()
+    except:
+        pass
+def mysql_get(query):
+    try:
+        my_host = getattr(settings, "DB_HOST", None)
+        my_user = getattr(settings, "DB_USER", None)
+        my_password = getattr(settings, "DB_PASSWORD", None)
+        my_db = getattr(settings, "DB_DB", None)
+	mydb = pymysql.connect(user=my_user,passwd=my_password,host=my_host,database=my_db)
+        mycursor = mydb.cursor()
+        mycursor.execute(query)
+        stats = mycursor.fetchall()
+        mycursor.close()
+        mydb.close()
+        for i in range(len(stats)):
+            try:
+                if stats[i].isalpha():
+                    stats[i] = unicode(stats[i], "utf-8")
+            except:
+                pass
+        
+        return stats
+    except Exception as x:
+        print x
+        pass
 class Google(object):
     
 
     def download(self,data):
+
         if 1==1: # checks if data has 4 elements
             if data[0]=='rid': #checks if the first element is 'rid'
                 m=0 #Sets file number to 0
@@ -58,38 +99,23 @@ class Google(object):
                     resln=640 
 
 
-                mydb = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor = mydb.cursor()
-
                 sql = 'SELECT EXISTS(SELECT * FROM routes_progress WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'");'
-                mycursor.execute(sql)
-                stats = mycursor.fetchall()
-                mycursor.close()
-                mydb.close()
+                stats=mysql_get(sql)
+                
                 if(stats[0][0]==0):
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb1 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor1 = mydb1.cursor()
                     sql1 = 'INSERT INTO routes_progress (route_id,direction,view,min,resolution,environment) VALUES ('+routename+',"'+sqldir+'","'+camangle+'","'+currentmin+'","'+ores+'","'+env+'")'
-                    mycursor1.execute(sql1)
-                    mydb1.commit()
-                    mycursor1.close()
-                    mydb1.close()
-                
+                    mysql_post(sql1)
+
                 sql2 = 'UPDATE routes_progress SET gen_status=0 WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
                 
                 currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                mydb2 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor2 = mydb2.cursor()
                 sql2 = 'UPDATE routes_progress SET gen_status=0,min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                mycursor2.execute(sql2)
-                mydb2.commit()
-                mycursor2.close()
-                mydb2.close()
-                
+                mysql_post(sql2)
+
                 #Prints route id and direction in terminal
                  
-                base_dir = '/home/crowdplat/vta' #Base directory
+                base_dir = '/var/www/html/vta' #Base directory
                 
                 pdir='/' # Project directory
                 sdata=list();
@@ -139,45 +165,28 @@ class Google(object):
                         #If View is Left, Right or Backward Overwrites 405 to progress file (UI will display create forward first)
                         
                         currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                        mydb5 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                        mycursor5 = mydb5.cursor()
                         sql5 = 'UPDATE routes_progress SET progress="No coordinates found in database." , min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                        mycursor5.execute(sql5)
-                        mydb5.commit()
-                        mycursor5.close()
-                        mydb5.close()
+                        mysql_post(sql5)
+
                     except Exception as x:
-                        mydb6 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                        mycursor6 = mydb6.cursor()
                         sql6 = 'INSERT INTO error_log (route_id,direction,view,resolution,environment,log) VALUES ('+routename+',"'+sqldir+'","'+camangle+'","'+ores+'","'+env+'","'+str(x)+'")'
-                        mycursor6.execute(sql6)
-                        mydb6.commit()
-                        mycursor6.close()
-                        mydb6.close()
+                        mysql_post(sql6)
+
                     return 0
                 
                 # Creates video directories
                 try:
-                    os.makedirs(base_dir+pdir+dirname)
-                    os.makedirs(base_dir+pdir+dirname+'/original')
-                    os.makedirs(base_dir+pdir+dirname+'/original/left')
-                    os.makedirs(base_dir+pdir+dirname+'/original/right')
-                    os.makedirs(base_dir+pdir+dirname+'/original/forward')
-                    os.makedirs(base_dir+pdir+dirname+'/original/backward')
-                    os.makedirs(base_dir+pdir+dirname+'/cropped')
-                    os.makedirs(base_dir+pdir+dirname+'/cropped/left')
-                    os.makedirs(base_dir+pdir+dirname+'/cropped/right')
-                    os.makedirs(base_dir+pdir+dirname+'/cropped/forward')
-                    os.makedirs(base_dir+pdir+dirname+'/cropped/backward')
-                except Exception as x:
-                    mydb7 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor7 = mydb7.cursor()
-                    sql7 = 'INSERT INTO error_log (route_id,direction,view,resolution,environment,log) VALUES ('+routename+',"'+sqldir+'","'+camangle+'","'+ores+'","'+env+'","'+str(x)+'")'
-                    mycursor7.execute(sql7)
-                    mydb7.commit()
-                    mycursor7.close()
-                    mydb7.close()
-                    print "Directory exists!"
+                    createdir(base_dir+pdir+dirname+'/original')
+                    createdir(base_dir+pdir+dirname+'/original/left')
+                    createdir(base_dir+pdir+dirname+'/original/right')
+                    createdir(base_dir+pdir+dirname+'/original/forward')
+                    createdir(base_dir+pdir+dirname+'/original/backward')
+                    createdir(base_dir+pdir+dirname+'/cropped')
+                    createdir(base_dir+pdir+dirname+'/cropped/left')
+                    createdir(base_dir+pdir+dirname+'/cropped/right')
+                    createdir(base_dir+pdir+dirname+'/cropped/forward')
+                    createdir(base_dir+pdir+dirname+'/cropped/backward')
+                except:
                     pass
                 tang= 0
                 vtemp=0
@@ -252,13 +261,8 @@ class Google(object):
                                 b2 = float(b[1]) #lng of rcord
 
                             except Exception as x:
-                                mydb8 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                                mycursor8 = mydb8.cursor()
                                 sql8 = 'INSERT INTO error_log (route_id,direction,view,resolution,environment,log) VALUES ('+routename+',"'+sqldir+'","'+camangle+'","'+ores+'","'+env+'","'+str(x)+'")'
-                                mycursor8.execute(sql8)
-                                mydb8.commit()
-                                mycursor8.close()
-                                mydb8.close()
+                                mysql_post(sql8)
                                 pass 
                             ang=int(self.calculate_initial_compass_bearing((a1,a2),(b1,b2))) # Calculate the Heading angle (Bearing angle)
                             
@@ -275,13 +279,8 @@ class Google(object):
                             '''
                             currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
 
-                            mydb9 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                            mycursor9 = mydb9.cursor()
                             sql9 = 'UPDATE routes_progress SET progress="Downloading images : '+str(int(prog))+'% Completed",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                            mycursor9.execute(sql9)
-                            mydb9.commit()
-                            mycursor9.close()
-                            mydb9.close()
+                            mysql_post(sql9)
                             if (camangle=='Forward') or (camangle=='All'):
                                 fwd=threading.Thread(target=self.grabimage,args=(ocord,ang+0,resln,base_dir,pdir,dirname,'forward',m1,))
                                 fwd.setDaemon(True)
@@ -378,23 +377,13 @@ class Google(object):
                             except Exception as x:
                                 
                                 ocord = rcord # To download next image
-                                mydb10 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                                mycursor10 = mydb10.cursor()
                                 sql10 = 'INSERT INTO error_log (route_id,direction,view,resolution,environment,log) VALUES ('+routename+',"'+sqldir+'","'+camangle+'","'+ores+'","'+env+'","'+str(x)+'")'
-                                mycursor10.execute(sql10)
-                                mydb10.commit()
-                                mycursor10.close()
-                                mydb10.close()
+                                mysql_post(sql10)
                                 pass
                             
                         except Exception as x:
-                            mydb11 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                            mycursor11 = mydb11.cursor()
                             sql11 = 'INSERT INTO error_log (route_id,direction,view,resolution,environment,log) VALUES ('+routename+',"'+sqldir+'","'+camangle+'","'+ores+'","'+env+'","'+str(x)+'")'
-                            mycursor11.execute(sql11)
-                            mydb11.commit()
-                            mycursor11.close()
-                            mydb11.close()
+                            mysql_post(sql11)
                             pass
                 
                 if (camangle=='Forward') or (camangle=='All'):
@@ -414,25 +403,15 @@ class Google(object):
                 if (camangle=='Forward') or (camangle=='All'):
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb12 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor12 = mydb12.cursor()
                     sql12 = 'UPDATE routes_progress SET progress="99% Completed ( Generating forward video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor12.execute(sql12)
-                    mydb12.commit()
-                    mycursor12.close()
-                    mydb12.close()
+                    mysql_post(sql12)
 
                     #Creates forward video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/forward/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/forward/'+'%d_cropped.jpg -c:v libx264  -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4')
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb13 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor13 = mydb13.cursor()
                     sql13 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading forward video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor13.execute(sql13)
-                    mydb13.commit()
-                    mycursor13.close()
-                    mydb13.close()
+                    mysql_post(sql13)
                     #Uploads forward video to s3
                     os.system('AWS_ACCESS_KEY_ID='+aws_key+' AWS_SECRET_ACCESS_KEY='+aws_secret+' aws s3 cp '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4 '+api_url+env+'/'+routename+'/ --acl public-read-write')
                                        
@@ -440,24 +419,14 @@ class Google(object):
                 if (camangle=='Backward') or (camangle=='All'):
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb14 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor14 = mydb14.cursor()
                     sql14 = 'UPDATE routes_progress SET progress="99% Completed ( Generating backward video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor14.execute(sql14)
-                    mydb14.commit()
-                    mycursor14.close()
-                    mydb14.close()
+                    mysql_post(sql14)
                     #Creates backward video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/backward/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/backward/'+'%d_cropped.jpg -c:v libx264 -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4')
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb15 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor15 = mydb15.cursor()
                     sql15 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading backward video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor15.execute(sql15)
-                    mydb15.commit()
-                    mycursor15.close()
-                    mydb15.close()
+                    mysql_post(sql15)
                     #Upload backward video to s3
                     os.system('AWS_ACCESS_KEY_ID='+aws_key+' AWS_SECRET_ACCESS_KEY='+aws_secret+' aws s3 cp '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4 '+api_url+env+'/'+routename+'/ --acl public-read-write')
                     
@@ -465,24 +434,14 @@ class Google(object):
                 if (camangle=='Left') or (camangle=='All'):
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb16 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor16 = mydb16.cursor()
                     sql16 = 'UPDATE routes_progress SET progress="99% Completed ( Generating left video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor16.execute(sql16)
-                    mydb16.commit()
-                    mycursor16.close()
-                    mydb16.close()
+                    mysql_post(sql16)
                     #Create Left video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/left/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/left/'+'%d_cropped.jpg -c:v libx264 -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4')
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb17 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor17 = mydb17.cursor()
                     sql17 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading left video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor17.execute(sql17)
-                    mydb17.commit()
-                    mycursor17.close()
-                    mydb17.close()
+                    mysql_post(sql17)
                     #Upload left video to s3
                     os.system('AWS_ACCESS_KEY_ID='+aws_key+' AWS_SECRET_ACCESS_KEY='+aws_secret+' aws s3 cp '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4 '+api_url+env+'/'+routename+'/ --acl public-read-write')
                     
@@ -490,26 +449,15 @@ class Google(object):
                 if (camangle=='Right') or (camangle=='All'):
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb18 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor18 = mydb18.cursor()
                     sql18 = 'UPDATE routes_progress SET progress="99% Completed ( Generating right video ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor18.execute(sql18)
-                    mydb18.commit()
-                    mycursor18.close()
-                    mydb18.close()
-
+                    mysql_post(sql18)
                     #Create right video using FFMPEG
-                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/right/'+'%d_cropped.jpg -c:v libx264 -preset slow -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4')
+                    os.system('/usr/bin/ffmpeg -framerate '+fps+' -y -i '+base_dir+pdir+dirname+'/cropped/right/'+'%d_cropped.jpg -c:v libx264  -crf 22 -loglevel quiet '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4')
                     #Upload right video to s3
                     
                     currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                    mydb19 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor19 = mydb19.cursor()
                     sql19 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading right video to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                    mycursor19.execute(sql19)
-                    mydb19.commit()
-                    mycursor19.close()
-                    mydb19.close()
+                    mysql_post(sql9)
                     os.system('AWS_ACCESS_KEY_ID='+aws_key+' AWS_SECRET_ACCESS_KEY='+aws_secret+' aws s3 cp '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4 '+api_url+env+'/'+routename+'/ --acl public-read-write')
                     
                 
@@ -542,29 +490,14 @@ class Google(object):
                         }
 
                     response = requests.request("POST",fb_url+str(ores.lower())+"-resolution/"+str(routename)+"/"+str(dirid)+"/front", data=payload, headers=headers)
-                    mydb20 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor20 = mydb20.cursor()
                     sql20 = "INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ("+routename+",'"+sqldir+"','Forward_API_Response','"+str(response.text)+"','"+current_date+"','"+ores+"','"+env+"')"
-                    mycursor20.execute(sql20)
-                    mydb20.commit()
-                    mycursor20.close()
-                    mydb20.close()
+                    mysql_post(sql20)
 
-                    mydb21 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor21 = mydb21.cursor()
                     sql21 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","VIDEO_Forward","'+url_forward+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor21.execute(sql21)
-                    mydb21.commit()
-                    mycursor21.close()
-                    mydb21.close()
+                    mysql_post(sql21)
 
-                    mydb25 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor25 = mydb25.cursor()
                     sql25 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Forward","'+url_fkml+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor25.execute(sql25)
-                    mydb25.commit()
-                    mycursor25.close()
-                    mydb25.close()
+                    mysql_post(sql25)
 
                 if (camangle=='Backward') or (camangle=='All'):
                     payload = '{\n  \"videoBackUrl\":\"'+url_backward+'\",\n  \"KmlUrlBack\":\"'+url_bkml+'\"\n}'
@@ -579,30 +512,14 @@ class Google(object):
 
                  
                                     
-                    mydb20 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor20 = mydb20.cursor()
                     sql20 = "INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ("+routename+",'"+sqldir+"','Backward_API_Response','"+str(response.text)+"','"+current_date+"','"+ores+"','"+env+"')"
-                    mycursor20.execute(sql20)
-                    mydb20.commit()
-                    mycursor20.close()
-                    mydb20.close()
+                    mysql_post(sql20)
 
-                    mydb22 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor22 = mydb22.cursor()
                     sql22 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","VIDEO_Backward","'+url_backward+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor22.execute(sql22)
-                    mydb22.commit()
-                    mycursor22.close()
-                    mydb22.close()
-
-                    mydb325 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor325 = mydb325.cursor()
-                    sql325 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Backward","'+url_bkml+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor325.execute(sql325)
-                    mydb325.commit()
-                    mycursor325.close()
-                    mydb325.close()
-
+                    mysql_post(sql22)
+                    
+                    sql25 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Backward","'+url_bkml+'","'+current_date+'","'+ores+'","'+env+'")'
+                    mysql_post(sql25)
                 
                 if (camangle=='Left') or (camangle=='All'):
                     payload = '{\n  \"videoLeftUrl\":\"'+url_left+'\",\n  \"KmlUrlLeft\":\"'+url_lkml+'\"\n}'
@@ -617,30 +534,14 @@ class Google(object):
 
                    
                     
-                    mydb20 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor20 = mydb20.cursor()
                     sql20 = "INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ("+routename+",'"+sqldir+"','Left_API_Response','"+str(response.text)+"','"+current_date+"','"+ores+"','"+env+"')"
-                    mycursor20.execute(sql20)
-                    mydb20.commit()
-                    mycursor20.close()
-                    mydb20.close()
+                    mysql_post(sql20)
 
-                    mydb23 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor23 = mydb23.cursor()
                     sql23 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","VIDEO_Left","'+url_left+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor23.execute(sql23)
-                    mydb23.commit()
-                    mycursor23.close()
-                    mydb23.close()
-
-                    mydb125 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor125 = mydb125.cursor()
-                    sql125 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Left","'+url_lkml+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor125.execute(sql125)
-                    mydb125.commit()
-                    mycursor125.close()
-                    mydb125.close()
-
+                    mysql_post(sql23)
+                    
+                    sql25 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Left","'+url_lkml+'","'+current_date+'","'+ores+'","'+env+'")'
+                    mysql_post(sql25)
 
 
                 if (camangle=='Right') or (camangle=='All'):
@@ -654,50 +555,23 @@ class Google(object):
 
                     response = requests.request("POST",fb_url+str(ores.lower())+"-resolution/"+str(routename)+"/"+str(dirid)+"/right", data=payload, headers=headers)
 
-                    mydb20 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor20 = mydb20.cursor()
                     sql20 = "INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ("+routename+",'"+sqldir+"','Right_API_Response','"+str(response.text)+"','"+current_date+"','"+ores+"','"+env+"')"
-                    mycursor20.execute(sql20)
-                    mydb20.commit()
-                    mycursor20.close()
-                    mydb20.close()
+                    mysql_post(sql20)
 
-                    mydb24 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor24 = mydb24.cursor()
                     sql24 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","VIDEO_Right","'+url_right+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor24.execute(sql24)
-                    mydb24.commit()
-                    mycursor24.close()
-                    mydb24.close()
+                    mysql_post(sql24)
 
-                    mydb225 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                    mycursor225 = mydb225.cursor()
-                    sql225 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Right","'+url_rkml+'","'+current_date+'","'+ores+'","'+env+'")'
-                    mycursor225.execute(sql225)
-                    mydb225.commit()
-                    mycursor225.close()
-                    mydb225.close()
-
+                    sql25 = 'INSERT INTO routes_log (route_id,direction,type,url,date_time,resolution,environment) VALUES ('+routename+',"'+sqldir+'","KML_Right","'+url_rkml+'","'+current_date+'","'+ores+'","'+env+'")'
+                    mysql_post(sql25)
 
        
                 currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                mydb26 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor26 = mydb26.cursor()
                 sql26 = 'UPDATE routes_progress SET progress="99% Completed ( Done uploading videos ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                mycursor26.execute(sql26)
-                mydb26.commit()
-                mycursor26.close()
-                mydb26.close()
+                mysql_post(sql26)
 
                 currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                mydb27 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor27 = mydb27.cursor()
                 sql27 = 'UPDATE routes_progress SET progress="99% Completed ( Generating KML ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                mycursor27.execute(sql27)
-                mydb27.commit()
-                mycursor27.close()
-                mydb27.close()
-     
+                mysql_post(sql27)
                 
                 if (camangle=='Forward') or (camangle=='All'):
                     try:
@@ -714,9 +588,9 @@ class Google(object):
                             print "Kml bad"
                     except:
                         print "No Cords received!"
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.kml')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/cropped/forward/')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.mp4')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_forward.kml')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/cropped/forward/')
 
                         
                 
@@ -737,9 +611,9 @@ class Google(object):
                     except:
                         print "No Cords received!"
 
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.kml')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/cropped/backward/')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.mp4')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_backward.kml')
+                   # os.system('rm -r '+base_dir+pdir+dirname+'/cropped/backward/')
 
 
                 if (camangle=='Left') or (camangle=='All'):
@@ -758,9 +632,9 @@ class Google(object):
                             print "Kml bad"
                     except:
                         print "No Cords received!"
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.kml')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/cropped/left/')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.mp4')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_left.kml')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/cropped/left/')
 
 
 
@@ -780,30 +654,20 @@ class Google(object):
                             print "Kml bad"
                     except:
                         print "No Cords received!"
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.kml')
-                    os.system('rm -r '+base_dir+pdir+dirname+'/cropped/right/')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.mp4')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/'+current_date+'_'+video+'_right.kml')
+                    #os.system('rm -r '+base_dir+pdir+dirname+'/cropped/right/')
 
 
                     
                 currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                mydb28 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor28 = mydb28.cursor()
                 sql28 = 'UPDATE routes_progress SET progress="99% Completed ( Uploading KML to s3 ).",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                mycursor28.execute(sql28)
-                mydb28.commit()
-                mycursor28.close()
-                mydb28.close()
-                
+                mysql_post(sql28)
+
                 currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
-                mydb29 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor29 = mydb29.cursor()
                 sql29 = 'UPDATE routes_progress SET progress="Generation completed.",min="'+currentmin+'" WHERE route_id='+routename+' AND direction="'+sqldir+'" AND view="'+camangle+'" AND resolution="'+ores+'" AND environment="'+env+'"'
-                mycursor29.execute(sql29)
-                mydb29.commit()
-                mycursor29.close()
-                mydb29.close()
-                
+                mysql_post(sql29)
+
                 return routename
 
     def calculate_initial_compass_bearing(self,pointA, pointB):
@@ -886,6 +750,7 @@ class Google(object):
         import json
         geopts=0
         fb_creds = getattr(settings, "FBC_"+ev.upper()+"", None)
+        
         fb = firebase.FirebaseApplication(fb_creds, None) # Configure firebase
         
         data=list(); 
@@ -911,7 +776,6 @@ class Google(object):
                 data.append(str(lt[1])+','+str(ln[1]))
             except:
                 print "Error Null value"
-        # print data
         return data
 
    
@@ -982,7 +846,7 @@ class Google(object):
             f.write("""<?xml version="1.0" encoding="UTF-8"?> <kml xmlns="http://www.opengis.net/kml/2.2">\n""")
             f.write("<Document>")
             print "NO OF COORDINATES IN KML = ",len(data),angname
-            print data
+            
             for i in range(0,len(data)):
                 try:
                     a = data[i].split(',')
@@ -1297,13 +1161,8 @@ class index(TemplateView):
                 stime=0
                 
 
-                mydb33 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor33 = mydb33.cursor()
                 sql33 = 'SELECT * FROM routes_progress WHERE route_id='+d2[0].replace(" ","")+' AND direction="'+d1[2]+'" AND view="'+d1[3]+'" AND environment="'+env+'"'
-                mycursor33.execute(sql33)
-                cstats=mycursor33.fetchall()
-                mycursor33.close()
-                mydb33.close()
+                cstats=mysql_get(sql33)
                 currentmin = str(os.popen('date +"%M"').read()).replace("\n","")
                 try:    
                     for k in range(0,2):
@@ -1312,29 +1171,19 @@ class index(TemplateView):
                             ptime=ptime+60
                     
                         if (ptime>15):
-                            mydb34 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                            mycursor34 = mydb34.cursor()
                             sql34 = 'UPDATE routes_progress SET gen_status=1 WHERE route_id='+str(cstats[k][1])+' AND direction="'+cstats[k][2]+'" AND view="'+cstats[k][3]+'" AND resolution="'+cstats[k][7]+'" AND environment="'+cstats[k][8]+'"'
-                            mycursor34.execute(sql34)
-                            mydb34.commit()
-                            mycursor34.close()
-                            mydb34.close()
+                            mysql_post(sql34)
                             pass
                         if cstats:
                             if cstats[k][4]=="Generation completed.":
                                 stats.append("Time")
-                                mydb35 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                                mycursor35 = mydb35.cursor()
                                 if cstats[k][3]=='All':
                                     vw="Forward"
                                 else:
                                     vw=cstats[k][3]
                                 sql35 = 'SELECT date_time FROM routes_log WHERE route_id='+str(cstats[k][1])+' AND direction="'+cstats[k][2]+'" AND type="VIDEO_'+vw+'" AND resolution="'+cstats[k][7]+'" AND environment="'+cstats[k][8]+'" ORDER BY id DESC LIMIT 1'
-                                mycursor35.execute(sql35)
                                 del ctime[:]    
-                                ctime.append(mycursor35.fetchall())
-                                mycursor35.close()
-                                mydb35.close()
+                                ctime.append(mysql_get(sql35))
                                 stats.append(ctime[0][0][0])
                             else:
                                 if cstats[k][4]==None:
@@ -1344,13 +1193,8 @@ class index(TemplateView):
                 except:
                         pass
 
-                mydb33 = mysql.connector.connect(host=my_host,user=my_user,passwd=my_password,database=my_db,buffered=True)
-                mycursor33 = mydb33.cursor()
                 sql33 = 'SELECT * FROM routes_progress WHERE progress !="Generation completed." '
-                mycursor33.execute(sql33)
-                pstats=mycursor33.fetchall()
-                mycursor33.close()
-                mydb33.close()
+                pstats=mysql_get(sql33)
                 stats.insert(4,[pstats])
                 if len(stats)>2:
                     return HttpResponse(json.dumps(stats))
@@ -1362,5 +1206,3 @@ class index(TemplateView):
                     stats.insert(4,[pstats])
                     return HttpResponse(json.dumps(stats))
 
-
-                
