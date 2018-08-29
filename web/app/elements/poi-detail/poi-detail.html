@@ -249,7 +249,6 @@
         );
       },
       _placeDetailsChange: function(newPlaceDetails) {
-        console.log(newPlaceDetails);
         if (newPlaceDetails) {
           var DEFAULT_POI_IMAGE = '/images/poi-detail-default.svg';
           var poiImage = newPlaceDetails.photos && newPlaceDetails.photos[0].getUrl({'maxHeight': 230, 'maxWidth': window.outerWidth});
@@ -278,8 +277,6 @@
       },
 
       _googleMapResponse: function(event, responseWrapper) {
-        console.log('received response from google');
-        console.log(responseWrapper.response);
         if (responseWrapper.response && responseWrapper.response.routes && responseWrapper.response.routes.length > 0) {
           var route = responseWrapper.response.routes[0];
 
@@ -297,7 +294,6 @@
         }
       },
       _get_direction_url:function(){
-        console.log(this._placeDetailsInfo);
         var directionsService = new google.maps.DirectionsService();
         var start = this.$.mapsUtils.getLatLngObj(currentLatForPoi, currentLngForPoi);
         var end = this._placeDetailsInfo.formatedAddress.replace(/ /g, '+');
@@ -308,10 +304,7 @@
         };
         var self = this;
         directionsService.route(request, function(result, status) {
-          console.log(result);
           if (status == 'OK') {
-            console.log('check experimental direction data below');
-            console.log(result);
             //directionsDisplay.setDirections(result);
             if(result){
               var responseWrapper ={
@@ -330,8 +323,6 @@
                     currentLngForPoi + '/' +
                     self._placeDetailsInfo.formatedAddress.replace(/ /g, '+') +
                     '/data=!4m2!4m1!3e2';
-
-                    //window.open(self._directionsUrl, '_blank');
                 }
               }
             }

@@ -130,12 +130,7 @@
 
       },
       _forceUpdatePois:function(newPois){
-        console.log('forcefully updating pois');
-        console.log(newPois);
-        //this.poisForShow = newPois;
         this.set('poisForShow', []);
-        //this.fire('poisForShow', newPois);
-        //this.$.poisList.render();
         this.set('selected', null);
         for(var i=0;i<newPois.length;i++){
           var poi = newPois[i];
@@ -147,11 +142,6 @@
       },
 
       _poisChange: function(newPois) {
-        //this._selectedPoiFilter = '';
-        //this.$.poisFilter.clearFilter();
-        console.log('Changed Poi List');
-        console.log(newPois);
-        //this.poisForShow = newPois;
         setTimeout(function(){
           if($('.paperListItem').length){
             var screenWidth = $(window).width();
@@ -160,7 +150,6 @@
             }
           }
         }, 1000);
-        //this.$.poisList.render();
       },
 
       _computeRating : function(rating) {
@@ -172,8 +161,6 @@
       },
 
       _selectedPoiFilterChange: function(newSelectedPoiFilter) {
-        //this.$.poisList.render();
-        console.log('filter: '+newSelectedPoiFilter)
         this.category = newSelectedPoiFilter;
         this.set('category', newSelectedPoiFilter);
         this.fire('category', newSelectedPoiFilter);
@@ -181,15 +168,6 @@
 
       _filterPois: function(item) {
         return true;
-        // if (item.types && item.types.length > 0) {
-        //   for (var indexType = 0; indexType < item.types.length; indexType++) {
-        //     if (item.types[indexType].indexOf(this._selectedPoiFilter) != -1) {
-        //       return true;
-        //     }
-        //   }
-        // }
-        //
-        // return false;
       }
     });
   </script>

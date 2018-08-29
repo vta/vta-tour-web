@@ -273,15 +273,12 @@
       },
       _savesettings: function() {
         var self = this;
-        console.log(this._routeDetails);
         //return false;
 
 
         this._settingsOrigin = this._settings;
         var update = {};
         update['settings/'] = this._settings;
-        console.log('check below update deep path data');
-        console.log(update);
         //return false;
         var firebaseDb = this.$.settings.db;
         var firebaseDbRef = firebaseDb.ref();

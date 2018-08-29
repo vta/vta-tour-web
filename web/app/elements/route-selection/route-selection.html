@@ -379,8 +379,6 @@
       },
 
       _selectedRouteDetailsChange: function(newSelectedRouteDoc) {
-        console.log('debug log, check below: direction: '+this._direction);
-        console.log(newSelectedRouteDoc)
         if (typeof newSelectedRouteDoc === 'object') {
           if(this._direction && newSelectedRouteDoc && newSelectedRouteDoc.stops && newSelectedRouteDoc.stops.length){
             this._stopsNotAvilable = false;
