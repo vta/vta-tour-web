@@ -423,8 +423,6 @@
           //this.$.poisFilterDropdownListBox.selected = -1;
         },
         _selectedPoiCategoryChange:function(newPoiCategory){
-
-          console.log(newPoiCategory);
           if(newPoiCategory && newPoiCategory.id){
               this.selectedFilter = newPoiCategory.id;
           }else {
@@ -489,7 +487,6 @@
 
           if (selectedItem) {
             this.selectedFilter = selectedItem.value;
-            console.log(this.selectedFilter);
           }
         }
       });

@@ -829,8 +829,6 @@
             return;
           }
 
-          //spcl_console.log ('check new route details')
-          //spcl_console.log (newRouteDetails)
 
           this._assignSource(newRouteDetails.videoUrl);
 
@@ -874,8 +872,6 @@
           var tourSlot = this.getRouteSlot(newRouteDetails.videoGeoPoints, departurePointInt, destinationPointInt);
 
           // Set the names of the departure and destination stops
-          //spcl_console.log ('checking below departure');
-          //spcl_console.log (newRouteDetails.stops[this.departureStopId]);
 
           this._departureStop = newRouteDetails.stops[this.departureStopId];
           if (this._departureStop) {
@@ -1021,8 +1017,6 @@
             return;
           }
 
-          //spcl_console.log ('current Time: '+newVideoCurrentTime)
-          //spcl_console.log ('duration: '+this.player.duration());
           var finalPoint = {
             lat: this._destinationStop.lat,
             lng: this._destinationStop.lng
@@ -1039,7 +1033,6 @@
             this._map.panTo(finalPoint);
             this.player.pause();
             this._setEndMessage();
-            console.log('block 1');
             return;
           }
           if (newVideoCurrentTime == (this._videoEndTime + 1)) {
@@ -1049,7 +1042,6 @@
             this.player.pause();
             this._setEndMessage();
             this._map.panTo(finalPoint);
-            console.log('block 2');
             return;
           } else if (newVideoCurrentTime > (this._videoEndTime + 1)) {
             this._currentLat = parseFloat(finalPoint.lat);
@@ -1059,7 +1051,6 @@
             this.player.currentTime(this._videoEndTime);
             this._setEndMessage()
             this._map.panTo(finalPoint);
-            console.log('block 3');
             return;
           } else if (newVideoCurrentTime >= this.player.duration()) {
             this._currentLat = parseFloat(finalPoint.lat);
@@ -1067,11 +1058,9 @@
             this._map.panTo(finalPoint);
             this.player.pause();
             this._map.panTo(finalPoint);
-            console.log('block 4');
             return;
           }
 
-          //spcl_console.log ('zoom level: '+this._map.getZoom());
 
           var point = this._routeDetails.videoGeoPoints[newVideoCurrentTime - 1];
           var nextPoint = this._routeDetails.videoGeoPoints[newVideoCurrentTime];
@@ -1084,9 +1073,6 @@
           this._progressBarValue = this._calculateVideoProgress(this._videoStartTime, this._videoEndTime, newVideoCurrentTime);
 
           if (point && !isNaN(parseFloat(point.lat)) && !isNaN(parseFloat(point.lng))) {
-            //spcl_console.log ('check lat and lng');
-            //spcl_console.log (point.lat);
-            //spcl_console.log (point.lng);
             this._currentLat = parseFloat(point.lat);
             this._currentLng = parseFloat(point.lng);
             this._map.panTo(point)
@@ -1095,9 +1081,7 @@
               this.reFocused = true;
             }
           }
-          //spcl_console.log ('point');
-          //spcl_console.log (point);
-          //spcl_console.log ('Current lat-lng: '+this._currentLat +'-'+this._currentLng);
+
 
           // Check if the video current time is in the range of the next stop
           if (this._nextStop && newVideoCurrentTime >= this._nextStop.sec &&
@@ -1254,17 +1238,13 @@
           if (this.$.mapsUtils && this._mapsApiLoaded && this._map) {
             //this.$.mapsUtils.getPoisFromLocation(this._currentLat, this._currentLng, this._map);
             this._customPois = this._customPoisOrigin;
-            console.log('Custom Pois');
-            console.log(this._customPois);
-            console.log('going to call meetp up apis')
+
             this._getNearByMeetUps(this._currentLat, this._currentLng);
             this._getNearByCoords(this._currentLat, this._currentLng);
             this._getNearByLimes(this._currentLat, this._currentLng);
 
 
           }
-          console.log('check pois');
-          console.log(this._pois);
           // Send the event to Google Analytics
           if (this._routeInfo) {
             ga('send', 'event', 'Tour', 'pause', this._routeInfo.name);
@@ -1336,7 +1316,6 @@
          */
         _onMapsApiLoad: function() {
           var self = this;
-          //spcl_console.log ('Maps Api Loaded');
           setTimeout(function() {
             google.maps.event.addListener(self._map, 'mouseup', function(event) {
               if (!self._isDragging && event.latLng) {
@@ -1344,7 +1323,6 @@
               }
             });
             google.maps.event.addListener(self._map, 'zoom_changed', function(event) {
-              //spcl_console.log ('zoom event changed')
               self._calculateValidZooomStatus();
             });
 
@@ -1369,8 +1347,6 @@
           if (!points || !this._mapsApiLoaded) {
             return;
           }
-          //spcl_console.log ('check points');
-          //spcl_console.log (points);
 
           var length = points.length;
           var cords = [];
@@ -1383,18 +1359,7 @@
             bounds.extend(new google.maps.LatLng(point.lat, point.lng));
           }
           var self = this;
-          // var map = document.querySelector('google-map');
-          // map.addEventListener('google-map-ready', function(e) {
-          //   //spcl_console.log ('Map loaded!');
-          // });
-          // //spcl_console.log ('map instance on ready');
-          // map = new google.maps.Map(document.getElementById('map'),{});
-          // //spcl_console.log (map);
-          // map.addEventListener('google-map-ready', function(e) {
-          //   //spcl_console.log ('Map loaded!');
-          // });
-          //spcl_console.log ('final cords');
-          //spcl_console.log (cords);
+
           cords.unshift({
             lat: this._departureStop.lat,
             lng: this._departureStop.lng,
@@ -1420,7 +1385,6 @@
             });
 
             // Draw the route line
-            //spcl_console.log (self._map)
             self._mapPolyline.setMap(self._map);
             self._map.fitBounds(bounds);
 
@@ -1431,12 +1395,7 @@
               }
             });
           } catch (err) {
-            //spcl_console.log ('map specific error');
-            //spcl_console.log (err);
-            // //spcl_console.log (map);
-            // //spcl_console.log ('element');
-            // //spcl_console.log (self.$.map)
-            // map = new google.maps.Map(self.$.map, {});
+              console.log(err);
           }
         },
 
@@ -1477,15 +1436,10 @@
           if (!this.code) {
             return;
           }
-          //spcl_console.log ('Map Getting Adjusted');
           if (!this._mapsApiLoaded) {
             return;
           }
           var mapHeight;
-
-          //spcl_console.log ('player height');
-          // //spcl_console.log (this.$.mainRouteVideo);
-          //spcl_console.log (this.$.mainRouteVideo.offsetHeight);
 
           // Check if the device is in landscape or is a high resolution screen to resize the google map to the same size that the map
           if (window.matchMedia("(min-width: 361px) and (orientation: landscape)").matches) {
@@ -1497,7 +1451,6 @@
 
           if (mapHeight <= 0) {
             mapHeight = $('.video-player-wrapper').find('video').height();
-            //spcl_console.log ('From Dom: '+mapHeight);
             if (mapHeight <= 0) {
               mapHeight = $('.video-player-wrapper').height();
               if (!mapHeight) {
@@ -1507,7 +1460,6 @@
                 }, 1000);
               }
             }
-            //spcl_console.log ('Final Map Height: '+mapHeight);
           }
           this.$.map.style.height = mapHeight + 'px';
           this.$.map.style.minHeight = mapHeight + 'px';
@@ -1569,8 +1521,6 @@
         },
 
         _poisLoaded: function(event) {
-          console.log('check pois below');
-          console.log(event.detail);
           this._pois = event.detail;
         },
 
@@ -1611,10 +1561,6 @@
           }
           this._selectedPoiMarker = e.srcElement;
           this._selectedPoiMarker.open = true;
-          // console.log(e.srcElement);
-          // var element = $(e.srcElement);
-          // var link = element.find('a').attr('href');
-          // window.open(link, '_blank');
         },
         _onStopIconClick: function(e) {
           if (this._selectedPoiMarker) {
@@ -1632,18 +1578,13 @@
               }
             );
           }
-          console.log(element);
-          console.log('check below stop code');
-          console.log(element.find('.amenities_list'));
+
           if (element.find('.amenities_list').length) {
             var code = parseInt(element.find('.amenities_list')[0].dataCode);
-            console.log(code);
             // return false;
             //code = 60001;
             this.$.customQueryObject.getStoredValue('/amenities/' + code)
               .then(function(data) {
-                console.log('Got aminities data')
-                console.log(data)
                 if (data && data.list) {
                   var amenities_list = data.list;
                   var amenities_list_string = "";
@@ -1693,14 +1634,11 @@
         },
 
         setUpdatedPois:function(fullPois){
-          console.log('Setting Pois:');
           this.set("_pois",[]);
           //this._pois = fullPois;
           this.set("_pois",fullPois);
           this.$.pois._forceUpdatePois([]);
           this.$.pois._forceUpdatePois(fullPois);
-          console.log('Final Pois');
-          console.log(this._pois);
         },
         _showOperationResultModal: function(isSuccess, operationDetailMessage) {
           this.$.saveOperationResultModal.open();
@@ -1729,8 +1667,7 @@
             settings.url = settings.url+"/"+this.nextPagePoiToken;
           }
           $.ajax(settings).done(function(response) {
-            console.log('check meetups data below');
-            console.log(response);
+
             if (response) {
               if(response.next_page_token){
                 self.nextPagePoiToken = response.next_page_token;
@@ -1787,19 +1724,10 @@
                 //   self.$.saveOperationResultModal.close();
                 // }
               }
-
-
-
-
-              //self.pois = response.features;
-
-              console.log('check actual pois Data');
-              console.log(response);
             }
           });
         },
         _selectedPoicatChange:function(newSelectedPoiCategory){
-          console.log('Selected POI category: '+newSelectedPoiCategory);
           this.selectedPoiCategory = newSelectedPoiCategory;
           if(newSelectedPoiCategory){
             this.nextPagePoiToken = "";
@@ -1807,12 +1735,9 @@
           }
         },
         _showmoreChange:function(showMoreValue){
-          console.log('Show more clicked!',showMoreValue);
           this._getNearByPois(this._currentLat,this._currentLng,this.selectedPoiCategory,true);
         },
         _selectedPoiChange: function(newSelectedPoi) {
-          console.log('check once');
-          console.log(newSelectedPoi);
           if (newSelectedPoi) {
             var getDetailsPromise = this.$.search.getDetails(newSelectedPoi.place_id);
             var self = this;
@@ -1827,7 +1752,7 @@
                 page(page.current + "/detail");
               }
             }).catch(function(error) {
-              //spcl_console.log (error)
+              console.log (error)
             });
 
             // Send the event to Google Analytics
@@ -1949,35 +1874,27 @@
               self._adjustMapSize();
             });
             self.player.on('play', function() {
-              //spcl_console.log ('Video Played');
               self._playVideo();
               self._adjustMapSize();
               self.reAlightElements();
             });
             self.player.on('pause', function() {
-              //spcl_console.log ('Video Paused');
               self._pauseVideo();
               self._adjustMapSize();
             });
             self.player.on('error', function(e) {
-              //spcl_console.log ('Video error');
-              //spcl_console.log (e);
+              console.log (e);
             });
             self.player.on('fullscreenchange', function() {
-              //alert('resized')
-              //spcl_console.log ('full screen event');
               self._adjustMapSize();
               self.reAlightElements();
             });
 
             self.player.on('timeupdate', function() {
-              ////spcl_console.log (this.currentTime());
               self._videoCurrentTimeChange(parseInt(this.currentTime()));
               self.reAlightElements();
             });
           });
-
-          //spcl_console.log ('done')
 
         },
         _assignSource: function(src) {
@@ -1997,17 +1914,10 @@
           }
         },
         _videoViewChange: function(src) {
-          // //spcl_console.log ('video direction change');
-          // //spcl_console.log (this.$.videoViewSelection.value);
-          // this._assignSource(this.$.videoViewSelection.value);
-          // this._videoCurrentTimeChange(0);
-          // this._pauseVideo();
           var self = this;
           var oldPlayerTime = this.currentVideoTime || 0;
           this._pauseVideo();
           this._assignSource(src);
-          console.log('Old View: '+this.old_view+' ,Current View '+this.current_view + ',Current Time: '+oldPlayerTime);
-          console.log('Current Time: '+oldPlayerTime);
           setTimeout(function(){
             if(self.player){
               self.player.currentTime(oldPlayerTime);
@@ -2027,9 +1937,6 @@
           if (!view) {
             return false;
           }
-          console.log('view');
-          console.log(view);
-          console.log(this._routeDetails);
           // var geoPoints = null;
           var viewPath = "";
           var applyNewGeoPoints = function(newGeoPoints){
@@ -2052,7 +1959,6 @@
               self._stopsSlot = self._routeDetails.stops.slice(self.destinationStopId, parseInt(self.departureStopId) + 1).reverse();
             }
             self._nextStop = self._calculateNextStop(self._stopsSlot, self._videoStartTime);
-            console.log('now settngs new tour path');
             self._loadRoutePath(tourSlot);
 
           }
@@ -2069,12 +1975,8 @@
               } else if (view == 'nightView') {
                 viewPath = "route-details-video-geopoints-night/"+this.code+"/"+self.direction
               }
-
-              console.log('going to looks for view path: '+ viewPath);
               this.$.customQueryObject.getStoredValue(viewPath)
                 .then(function(data) {
-                  console.log('data received from firebase for this view path');
-                  console.log(data);
                     if(data){
                       return applyNewGeoPoints(data)
                     }else{
@@ -2096,10 +1998,6 @@
             self.old_view = "frontView";
             self.current_view = "frontView";
             $('.SelectViewItems').on('click', function(e) {
-              console.log('check below data');
-              console.log(self._routeDetails);
-
-
               var videoSource = $(this).attr('data-video');
               var viewType = $(this).attr('id');
               self.old_view = self.current_view;
@@ -2114,9 +2012,7 @@
             //   'height':'20px'
             // })
             $(window).resize(function(e) {
-              // console.log(e);
-              // console.log('width below');
-              // console.log($(window).width());
+
               var screenWidth = $(window).width();
               if (screenWidth > 600) {
                 self.isDesktop = true;
@@ -2214,9 +2110,6 @@
           var self = this;
           directionsService.route(request, function(result, status) {
             if (status == 'OK') {
-              //spcl_console.log ('check experimental direction data below');
-              //spcl_console.log (result);
-              //directionsDisplay.setDirections(result);
               if (result) {
                 if (result.routes && result.routes.length) {
                   if (result.routes[0].legs && result.routes[0].legs.length) {
@@ -2257,13 +2150,9 @@
             }
           }
           $.ajax(settings).done(function(response) {
-            console.log('check meetups data below');
-            console.log(response);
+
             if (response.results) {
               self._meetUps = response.results;
-
-              console.log('check actual meetUp Data');
-              console.log(self._meetUps);
             }
           });
         },
@@ -2279,13 +2168,9 @@
             }
           }
           $.ajax(settings).done(function(response) {
-            // console.log('check meetups data below');
-            // console.log(response);
+
             if (response.features) {
               self._coords = response.features;
-
-              console.log('check actual coords Data');
-              console.log(self._coords);
             }
           });
         },
@@ -2301,13 +2186,8 @@
             }
           }
           $.ajax(settings).done(function(response) {
-            // console.log('check meetups data below');
-            // console.log(response);
             if (response) {
               self._limes = response;
-
-              console.log('check actual limes Data');
-              console.log(self._limes);
             }
           });
         },
@@ -2325,8 +2205,8 @@
 
       });
     } catch (err) {
-      //spcl_console.log ('route navigation error');
-      //spcl_console.log (err);
+      console.log ('route navigation error');
+      console.log (err);
     }
 
   })();

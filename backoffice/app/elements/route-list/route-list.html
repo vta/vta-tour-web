@@ -228,8 +228,6 @@
             return false;
           }
 
-          console.log('selecting view');
-
           var valueArray = selectedView.split('-');
           var route_code = valueArray[0];
           var direction = valueArray[1];
@@ -269,9 +267,7 @@
           Polymer.dom(activeRoute.querySelector('.route-map')).appendChild(routeMap);
           this._activeRouteCode = activeRoute.getAttribute('data-route-code');
           if(this._activeRouteCode){
-            console.log('code: '+this._activeRouteCode);
             var path = '/route-details/' + this._activeRouteCode + '/a/videoGeoPoints';
-            console.log('path is: '+path);
             this.$.videoGeoPoints.path = path;
           }
 

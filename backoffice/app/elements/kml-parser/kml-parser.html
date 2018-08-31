@@ -26,7 +26,6 @@
         reader.readAsText(this.file);
       },
       parseFromText : function(text,callback){
-        console.log('now processing KML file text');
          this._parseRouteShootKML(text, this);
          callback(this.result);
       },

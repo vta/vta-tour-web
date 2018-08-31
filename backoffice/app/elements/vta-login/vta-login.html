@@ -160,7 +160,6 @@ margin-left: 5px;">Virtual Tour</h1> -->
 
         this.$.auth.signInWithEmailAndPassword(this.$.user.value, this.$.password.value)
           .then(function(response) {
-            console.log(response);
             self._clear();
           })
           .catch(function(error) {

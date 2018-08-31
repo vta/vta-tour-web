@@ -613,7 +613,6 @@
           }, 1000);
         },
         _setKmlFiles: function(routeListArray, callback) {
-          console.log('Going to start Processing KML file');
           var self = this;
           var baseUrl = "";
           if(this._settings){
@@ -632,7 +631,6 @@
             if (!url) {
               return cb(null);
             }
-            console.log('Trying KML url: ' + url);
             // console.log("processing: "+url);
             // var settings = {
             //     "async": true,
@@ -655,10 +653,7 @@
             xhr.withCredentials = false;
 
             xhr.addEventListener("readystatechange", function() {
-              console.log(this.readyState);
               if (this.readyState === 4) {
-                console.log('check response');
-                console.log(this.responseText);
                 //console.log(this)
                 if (this.status == 200) {
                   self.$.tempKmlParser.parseFromText(this.responseText, cb);
@@ -676,8 +671,6 @@
           }
 
           var processRoute = function(index) {
-            console.log('Processing: ' + index);
-            console.log('Processing Total KMLS: ' + routeListArray.length);
             if (index < routeListArray.length) {
               var fullRouteDetails = routeListArray[index];
               var directionAKmlUrl = "";
@@ -772,8 +765,6 @@
               }
 
               processKmlUrl(directionAKmlUrl, function(parsedAData) {
-                console.log('check parsed data');
-                console.log(parsedAData);
                 fullRouteDetails.routeDetails.a.KmlUrl = directionAKmlUrl;
                 if (parsedAData) {
                   fullRouteDetails.routeDetails.a.videoGeoPoints = parsedAData;
@@ -998,8 +989,6 @@
               baseUrl = baseUrl+'/'+this._settings.environment+'/';
             }
           }
-          console.log('base Url: '+baseUrl);
-          console.log(routeListArray);
           var processVideoUrl = function(url, cb) {
             if (!url) {
               return cb(false);
@@ -1009,11 +998,7 @@
             var xhr = new XMLHttpRequest();
             xhr.withCredentials = false;
             xhr.addEventListener("readystatechange", function() {
-              console.log(this.readyState);
               if (this.readyState === 4) {
-                console.log('check response');
-                console.log(this.responseText);
-                //console.log(this)
                 if (this.status == 200) {
                   cb(true);
                 } else {
@@ -1027,10 +1012,8 @@
             xhr.send(data);
           }
           var processRoute = function(index) {
-            console.log('Processing: ' + index);
-            console.log('Toral Routes: '+ routeListArray.length);
+
             if (index < routeListArray.length) {
-              console.log('Entering Loop');
               var fullRouteDetails = routeListArray[index];
               var videoCode = fullRouteDetails.code;
               var videoAUrl = "";
@@ -1052,10 +1035,6 @@
               var isLatestSerourceA = false;
               var isLatestSerourceB = false;
 
-
-
-                console.log('Parsing stage 1');
-
               if (fullRouteDetails.routeDetailsResources && fullRouteDetails.routeDetailsResources.latestResources) {
                 if (fullRouteDetails.routeDetailsResources.latestResources.a) {
                   videoAUrl = baseUrl+fullRouteDetails.routeDetailsResources.latestResources.a.videoUrl;
@@ -1070,7 +1049,6 @@
                   videoBBackUrl = baseUrl+fullRouteDetails.routeDetailsResources.latestResources.b.videoBackUrl;
                 }
               }
-                console.log('Parsing stage 2');
 
               if (fullRouteDetails.routeDetailsResources && fullRouteDetails.routeDetailsResources.latestResourcesLowResolution) {
                 if (fullRouteDetails.routeDetailsResources.latestResourcesLowResolution.a) {
@@ -1081,7 +1059,6 @@
                   videoABackUrlLowRes = baseUrl+fullRouteDetails.routeDetailsResources.latestResourcesLowResolution.a.videoBackUrl;
 
                 }
-                  console.log('Parsing stage 2.1');
                 if (fullRouteDetails.routeDetailsResources.latestResourcesLowResolution.b) {
                   videoBUrlLowRes = baseUrl+fullRouteDetails.routeDetailsResources.latestResourcesLowResolution.b.videoUrl;
                   videoBLeftUrlLowRes = baseUrl+fullRouteDetails.routeDetailsResources.latestResourcesLowResolution.b.videoLeftUrl;
@@ -1089,10 +1066,6 @@
                   videoBBackUrlLowRes = baseUrl+fullRouteDetails.routeDetailsResources.latestResourcesLowResolution.b.videoBackUrl;
                 }
               }
-
-              console.log('Parsing stage 3');
-
-              console.log('Starting now');
 
 
               //   tempRouteList[i] = routeObject;
@@ -1231,8 +1204,6 @@
           if($('#update_stops_only').is(':checked')){
             this._updateStopsOnly = true;
           }
-          console.log('generated_video_only',this._generatedVideoOnly);
-          console.log('update_stops_only',this._updateStopsOnly);
           var self = this;
           var routes = [];
           var routesDetailses = [];
@@ -1242,12 +1213,8 @@
           this.$.routeDataProcessing.getStoredValue('/settings')
             .then(function(data) {
               self._settings = data;
-              console.log(self._settings);
               self.$.routeDataProcessing.getStoredValue('/routes')
                 .then(function(data) {
-                  // //console.log('Rotues Data');
-                  // //console.log(data);
-                  // //console.log(data.length);
                   routes = data;
                   self.$.routeDataProcessing.getStoredValue('/route-details-resources')
                         .then(function(data) {
@@ -1269,13 +1236,9 @@
           var tempRouteList = self._imported_routes_original;
           this._videoLinkBindingExistenceCheck(tempRouteList, function(bindedNewRouteListArray) {
             self._setKmlFiles(bindedNewRouteListArray, function(newRouteListArray) {
-              console.log('Final Routes array before processing KML files');
-              console.log(self._imported_routes);
               //self._setRoutes(newRouteListArray);
               self._imported_routes = newRouteListArray;
               self._imported_routes_original = newRouteListArray;
-              console.log('Final Routes array after processing KML files');
-              console.log(self._imported_routes);
               self.selectedTab = 1;
               self.$.saveOperationResultModal.close();
               self._showOperationResultModal(true, "All Routes avilable KML data process and updated below list, click on Batch import to update in firebase ");
@@ -1291,9 +1254,6 @@
         _setRoutes: function(routeListArray) {
           var self = this;
           this._imported_routes_original = routeListArray;
-
-          console.log('Final Routes array');
-          console.log(self._imported_routes);
           self.selectedTab = 1;
           if(this._updateStopsOnly){
             self._imported_routes = routeListArray;
@@ -1336,13 +1296,9 @@
           // }
           var finalSuitbleRoutes = [];
           var startMerge =  function(index){
-
-            console.log('merge Index: '+index);
             if(index<finalRoutes.length){
-              console.log('condition success')
               var fullRouteDetails = {};
               fullRouteDetails = finalRoutes[index];
-              console.log('code: '+fullRouteDetails.code);
               self.$.routeDataProcessing.getStoredValue('/route-details-original/'+fullRouteDetails.code)
                 .then(function(routeDetailsData) {
                  //self._combineRouteAndRouteDetails(routes,routesDetailses);
@@ -1373,8 +1329,6 @@
                   console.log(error);
                 });
             }else{
-              console.log('Main Routes selection Done');
-              console.log(finalSuitbleRoutes);
               self._setRoutes(finalSuitbleRoutes);
             }
           }
@@ -1613,10 +1567,6 @@
           }
 
           update['routes/' + code] = routeInfo;
-
-
-          console.log('check below update deep path');
-          console.log(update)
           //return callback(null,true);
 
           var firebaseDb = this.$.routeInfo.db;
@@ -1659,7 +1609,6 @@
                   console.log('There is a error to check')
                   console.log(err);
                 }
-                console.log('Success: ' + success);
                 startUpdate(index + 1);
               })
             } else {

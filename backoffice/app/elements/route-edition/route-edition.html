@@ -636,7 +636,6 @@
         }
       },
       _setDefaultLatLng:function(lat,lng){
-        console.log(lat,lng);
         this._routeInfo.latitude = lat;
         this._routeInfo.longitude = lng;
       },
@@ -1062,9 +1061,6 @@
 
       _saveRoute: function() {
         var self = this;
-
-        console.log(this._routeDetails);
-        console.log('above data is old one');
         if(!this._routeInfo.latitude && !this._routeInfo.longitude){
           if(this._routeDetails.a && this._routeDetails.a.videoGeoPoints && this._routeDetails.a.videoGeoPoints[1]){
             this._setDefaultLatLng (this._routeDetails.a.videoGeoPoints[1].lat, this._routeDetails.a.videoGeoPoints[1].lng);
@@ -1097,8 +1093,6 @@
           }
         }
 
-        console.log(this._routeDetails);
-        console.log('this is end of processing now going to save')
         this._routeInfoOrigin = this._routeInfo;
         this._routeDetailsOrigin = this._routeDetails;
         var code = this._routeInfo.code;
@@ -1199,8 +1193,6 @@
         }
         update['routes/'+code] = this._routeInfo;
         update['route-details/'+code] = this._routeDetails;
-        console.log('check below update deep path data');
-        console.log(update);
         var firebaseDb = this.$.routeInfo.db;
         var firebaseDbRef = firebaseDb.ref();
         firebaseDbRef.update(update, function(error) {
@@ -1208,7 +1200,6 @@
             console.log("Error updating data:", error);
             self._showOperationResultModal(false, error);
           }else{
-            console.log('Write Success');
               self._showOperationResultModal(true);
           }
         });

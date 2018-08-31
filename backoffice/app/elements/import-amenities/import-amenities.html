@@ -359,16 +359,11 @@
         },
       },
       _amenitiesOriginChange: function(newAmenitiesOrigin, oldData) {
-        console.log('check below main data')
-        console.log(newAmenitiesOrigin);
-        console.log(oldData)
         if (newAmenitiesOrigin ) {
           this._amenities = newAmenitiesOrigin;
         }
       },
       _amenitiesFieldsOriginChange: function(newAmenitiesFieldsOrigin, oldData) {
-        console.log('check below heads')
-        console.log(newAmenitiesFieldsOrigin);
         if (newAmenitiesFieldsOrigin ) {
           this._amenitiesFieldsOrigin = newAmenitiesFieldsOrigin;
         }
@@ -434,18 +429,12 @@
                return false;
              }
              var rawCsvAmenitiesArray = thisPolyMerObject.CSVtoArray(evt.target.result)
-             console.log('Check amenities Data');
-             console.log(rawCsvAmenitiesArray);
              var processedAminities = [];
              if(rawCsvAmenitiesArray.length && rawCsvAmenitiesArray.length>1){
                 var heading = rawCsvAmenitiesArray[0];
                 thisPolyMerObject._setFields(heading);
-                // console.log('check heading');
-                // console.log(heading);
                 rawCsvAmenitiesArray.shift();
                for(var i=0;i<rawCsvAmenitiesArray.length;i++){
-                 // console.log('check raw object');
-                 // console.log(rawCsvAmenitiesArray[i]);
                  if(rawCsvAmenitiesArray[i] && rawCsvAmenitiesArray[i].length==heading.length){
                    var amenityObject = {
                       list:[]
@@ -460,7 +449,6 @@
                        amenityObject.stop_code = keyValuePair.value;
                      }
                      amenityObject.list.push(keyValuePair);
-                     //amenityObject[heading[h]] = rawCsvAmenitiesArray[i][h];
                    }
                    if(amenityObject.stop_code){
                      processedAminities.push(amenityObject);
@@ -469,8 +457,6 @@
                  }
                }
              }
-             console.log('Check Processed amenities Data');
-             console.log(processedAminities);
              thisPolyMerObject._setAmenities(processedAminities);
              if(processedAminities.length==0){
                this.$.saveOperationResultModal.close();
@@ -483,12 +469,7 @@
          reader.readAsBinaryString(blob);
       },
       _changeFieldValue:function(e){
-        console.log(e);
         var targetObject = $('#'+e.target.id);
-        console.log('check key and value');
-        console.log('id: '+targetObject.attr('id'));
-        console.log('id: '+targetObject.attr('value'));
-        console.log('is Checked: '+targetObject.is(":checked"));
         for(var h=0;h<this._amenitiesFields.length;h++){
           if(this._amenitiesFields[h].key==targetObject.attr('id')){
             this._amenitiesFields[h].enabled= targetObject.is(":checked");
@@ -498,8 +479,6 @@
       _setAmenitiesFields:function(){
          this._showOperationResultModal(false,"Amenities list data gettnig updated for preview after field set change, it will take a while...");
          var fields = this._amenitiesFields;
-         console.log('check updated fields');
-         console.log(fields);
          for(var i=0;i<this._amenities.length;i++){
            for(var j=0;j<this._amenities[i].list.length;j++){
              for(var h=0;h<fields.length;h++){
@@ -594,13 +573,10 @@
         var firebaseDb = this.$.amenities.db;
         var firebaseDbRef = firebaseDb.ref();
         update['amenities/'+code] = amenityInfo;
-        console.log('check below update deep path');
-        console.log(update)
         firebaseDbRef.update(update, function(error) {
           if (error) {
             console.log("Error updating data:", error);
           }else{
-            console.log('Write Success');
           }
           return callback(null,true);
         });
@@ -631,8 +607,7 @@
         // for(var i=0;i<this._amenities.length;i++){
         //   update['amenities/'+this._amenities[i].stop_code] = this._amenities[i];
         // }
-        console.log('check below update deep path');
-        console.log(update)
+
         //return false;
         firebaseDbRef.update(update, function(error) {
           if (error) {
@@ -644,7 +619,6 @@
           }
 
           var startUpdate =  function(index){
-            console.log('Index: '+index);
             if(index<self._amenities.length){
               var fullamenityDetails = {};
               fullamenityDetails = self._amenities[index];
@@ -654,7 +628,6 @@
                     console.log(err);
                   }
 
-                  console.log('Success: '+success);
 
                   startUpdate(index+1);
               });
@@ -709,7 +682,6 @@
               self.$.amenities.getStoredValue('/amenities/')
                 .then(function(data) {
                   if(data){
-                    console.log('Total Amenities: '+data.length);
 
                     self._setAmenities(serialize(data));
                   }else{

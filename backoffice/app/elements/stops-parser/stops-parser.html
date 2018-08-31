@@ -63,7 +63,6 @@
         for (var i = 0; i < length; i++) {
           var stopInfo = this._getStopFromElement(elements[i]);
           this._stopsList.push([stopInfo[0], stopInfo[1]]);
-          console.log([stopInfo[0], stopInfo[1]]);
         }
 
         this._saveStops();
@@ -78,14 +77,12 @@
           self.$.stop.data = self._stopsList[indexStopSave][1];
           self.$.stop.save('/stops', self._stopsList[indexStopSave][0])
             .then(function() {
-              console.log(self._stopsList[indexStopSave][0], self._stopsList[indexStopSave][1]);
               self.$.stop.reset();
               self._saveStop(indexStopSave + 1, self);
             }).catch(function(error) {
               console.log(error);
             });
         } else {
-          console.log("** Stops Saved **");
         }
       },
 

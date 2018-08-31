@@ -358,7 +358,6 @@
 
       _saveCustomPoi: function() {
         var self = this;
-        console.log(this._customPoiInfo);
         this._customPoiInfoOrigin = this._customPoiInfo;
         var code = this._customPoiInfo.code;
         if(!code){
@@ -368,8 +367,6 @@
         var update = {};
         update['customPois/'+code] = null;
         update['customPois/'+this._customPoiInfo.code] = this._customPoiInfo;
-        console.log('check below update deep path data');
-        console.log(update);
         var firebaseDb = this.$.customPoiInfo.db;
         var firebaseDbRef = firebaseDb.ref();
         firebaseDbRef.update(update, function(error) {
@@ -377,7 +374,6 @@
             console.log("Error updating data:", error);
             self._showOperationResultModal(false, error);
           }else{
-            console.log('Write Success');
               self._showOperationResultModal(true);
               if(self._isNewCustomPoi){
                 setTimeout(function(){
@@ -431,7 +427,6 @@
       _onIconFileAChange: function(event) {
          var file = event.target.files[0];
          var preview = document.querySelector('#imagePreview');
-          console.log(file);
           // var reader = new FileReader();
           // reader.readAsBinaryString(file);
           //
@@ -444,7 +439,6 @@
           var reader  = new FileReader();
           var self = this;
           reader.addEventListener("load", function () {
-            console.log(reader.result);
             preview.src = reader.result;
             self._customPoiInfo.icon = reader.result;
           }, false);

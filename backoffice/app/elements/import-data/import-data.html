@@ -549,8 +549,6 @@
         _setRoutes: function(routeListArray) {
           var self = this;
           self._imported_routes = routeListArray;
-          // console.log('Final Routes array after processing KML files');
-          // console.log(self._imported_routes);
           self.selectedTab = 1;
           self.$.saveOperationResultModal.close();
           self._showOperationResultModal(true, "Route list data loaded, please verify route list data after that you can click on Batch Import to update database ");
@@ -578,7 +576,6 @@
               //document.getElementById('byte_content').textContent = evt.target.result;
               //this._imported_routes = JSON.parse(evt.target.result);
               var rawStopsData = JSON.parse(evt.target.result);
-              console.log(this.rawStopsData);
               let stopListArray = [];
 
               for (var i = 0; i < rawStopsData.length; i++) {
@@ -638,7 +635,6 @@
               //document.getElementById('byte_content').textContent = evt.target.result;
               //this._imported_routes = JSON.parse(evt.target.result);
               var rawRoutesData = JSON.parse(evt.target.result);
-              console.log(rawRoutesData);
 
               let routeListArray = [];
 
@@ -679,7 +675,6 @@
               for (var i = 0; i < rawRoutesData.length; i++) {
 
                 var rawRouteObject = rawRoutesData[i];
-                console.log('processing: ' + rawRouteObject.route_id);
                 if (!rawRouteObject.route_id) {
                   self.$.saveOperationResultModal.close();
                   alert('Processing error alert: route_id field missing for record number: ' + (i + 1) + ', please upload valid file again');
@@ -800,8 +795,6 @@
                     var geoPointsArray = eval(geoPointsArrayString);
                     routeObject.routeDetails.a.videoGeoPoints = objectifyLatLon(geoPointsArray);
                     if (geoPointsArray && geoPointsArray.length) {
-                      //console.log('check important below');
-                      console.log(geoPointsArray[0]);
                       routeObject.latitude = geoPointsArray[0].lat;
                       routeObject.longitude = geoPointsArray[0].lon;
                     }
@@ -915,8 +908,6 @@
                     var geoPointsArray = eval(geoPointsArrayString);
                     routeObject.routeDetails.b.videoGeoPoints = objectifyLatLon(geoPointsArray);
                     if (geoPointsArray && geoPointsArray.length) {
-                      //console.log('check important below');
-                      console.log(geoPointsArray[0]);
                       routeObject.latitude = geoPointsArray[0].lat;
                       routeObject.longitude = geoPointsArray[0].lon;
                     }
@@ -926,8 +917,6 @@
                   }
                 }
               }
-              console.log('check final routes array');
-              console.log(routeListArray);
 
               thisPolyMerObject._setRoutes(routeListArray);
               if (routeListArray.length == 0) {
@@ -1074,8 +1063,6 @@
               routeDetailsOriginal.b = routeDetails.b;
               update['routes/' + code] = routeInfo;
               update['route-details-original/' + code] = routeDetailsOriginal;
-              console.log('check below update deep path');
-              console.log(update);
 
               //return callback(null, true);
 
@@ -1083,7 +1070,7 @@
                 if (error) {
                   console.log("Error updating data:", error);
                 } else {
-                  console.log('Write Success');
+
                 }
                 return callback(null, true);
               });
@@ -1121,13 +1108,11 @@
           stopInfo.g = Geohash.encode(stopInfo.lat,stopInfo.lng, 10);
           stopInfo.l = [stopInfo.lat,stopInfo.lng]
           update['stops/' + code] = stopInfo;
-          console.log('check below update deep path');
-          console.log(update)
           firebaseDbRef.update(update, function(error) {
             if (error) {
               console.log("Error updating data:", error);
             } else {
-              console.log('Write Success');
+
             }
             // geoFire.set(code, [stopInfo.lat, stopInfo.lng]).then(function() {
             //   console.log("Provided key has been added to GeoFire");
@@ -1162,19 +1147,15 @@
           var firebaseDb = this.$.routeInfo.db;
           var firebaseDbRef = firebaseDb.ref();
           update['stops'] = null;
-          console.log('check below update deep path');
-          console.log(update);
           firebaseDbRef.update(update, function(error) {
             if (error) {
               console.log("field write Error updating data:", error);
               //self._showOperationResultModal(false,"Err!!! data not updated in firebase db, please import proper csv file");
             }else{
-              console.log('fields Write Success');
               //self._showOperationResultModal(true,"All imported_stops data updated in firebase db");
             }
 
             var startUpdate =  function(index){
-              console.log('Index: '+index);
               if(index<self._imported_stops.length){
                 var fullStopDetails = {};
                 fullStopDetails = self._imported_stops[index];
@@ -1183,8 +1164,6 @@
                       console.log('There is a error to check')
                       console.log(err);
                     }
-
-                    console.log('Success: '+success);
 
                     startUpdate(index+1);
                 });
@@ -1237,7 +1216,6 @@
                   console.log('There is a error to check')
                   console.log(err);
                 }
-                console.log('Success: ' + success);
                 startUpdate(index + 1);
               });
             } else {

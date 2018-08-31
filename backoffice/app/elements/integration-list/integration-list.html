@@ -253,15 +253,12 @@
       },
       _saveIntegration: function() {
         var self = this;
-        console.log(this._routeDetails);
         //return false;
 
 
         this._integrationsOrigin = this._integrations;
         var update = {};
         update['integrations/'] = this._integrations;
-        console.log('check below update deep path data');
-        console.log(update);
         //return false;
         var firebaseDb = this.$.integration.db;
         var firebaseDbRef = firebaseDb.ref();
@@ -313,7 +310,6 @@
           .then(function(data) {
 
             self._integrationsOrigin = data;
-            //console.log(self._integrationsOrigin);
           });
 
       },
