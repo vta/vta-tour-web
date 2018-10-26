@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 var request = require("request");
 let config = {};
+const third_party_config = require('./third_party_config.json');
 
 const firebaseApp = firebase.initializeApp(functions.config().firebase);
 function getConfig(){
@@ -132,7 +133,7 @@ app.get('/api/google-pois/:lat/:lon/:type/:token?', (req, res) => {
   const lon = req.params.lon;
   const type = req.params.type;
   const token = req.params.token;
-  const apiKey = req.get("x-api-key");
+  const apiKey = third_party_config.google_api_key;
 
 
 var options = {
